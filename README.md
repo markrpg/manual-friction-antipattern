@@ -34,7 +34,9 @@ Record the walk in a scorecard ([template](templates/scorecard.json)) and run:
 python3 scripts/friction_score.py examples/small-repo.json
 ```
 
-Python 3, no dependencies. Exits 1 when the journey is over budget, so it can gate CI.
+Python 3, no dependencies. It prints the ratio, score, every event and which budget rules failed.
+
+To block a release that adds friction, run it in your automated build checks: it exits with an error when the journey is over budget, which fails the check.
 
 ## Files
 
@@ -45,3 +47,7 @@ Python 3, no dependencies. Exits 1 when the journey is over budget, so it can ga
 | [references/patterns.md](references/patterns.md) | Build habits with replacements, banned patterns, static scan |
 | [examples/small-repo.md](examples/small-repo.md) | The scored calibration run (33 points, broken band) |
 | [templates/](templates) | Journey card and scorecard |
+
+## License
+
+MIT. See [LICENSE](LICENSE).
