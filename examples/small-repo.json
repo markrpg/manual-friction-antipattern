@@ -1,0 +1,43 @@
+{
+  "journey": "Launch → add a new folder → first task running",
+  "result": "First task running in small-repo",
+  "build": "Qwobolt ef594d8 (installed)",
+  "mode": "walk",
+  "main_journey": true,
+  "starting_state": "Installed app, Claude Code already signed in, new folder small-repo, no workarounds learned",
+  "necessary_steps": [
+    "Open folder",
+    "Choose the folder",
+    "Write the task",
+    "Start it, approving folder access"
+  ],
+  "steps": [
+    { "action": "Search", "necessary": false, "event": "E4" },
+    { "action": "Projects", "necessary": false, "event": "E4" },
+    { "action": "Open folder", "necessary": true },
+    { "action": "Cmd+Shift+G does nothing in the picker", "necessary": false, "event": "E7" },
+    { "action": "Drag the folder in from Finder", "necessary": true },
+    { "action": "Continue project, which does nothing", "necessary": false, "event": "E2" },
+    { "action": "Quit Qwobolt", "necessary": false, "event": "E2" },
+    { "action": "Reopen Qwobolt", "necessary": false, "event": "E2" },
+    { "action": "Open small-repo", "necessary": false, "event": "E2" },
+    { "action": "Composer sends them to Settings", "necessary": false, "event": "E3" },
+    { "action": "Providers", "necessary": false, "event": "E3" },
+    { "action": "Check connection", "necessary": false, "event": "E6" },
+    { "action": "Use in this project", "necessary": false, "event": "E5" },
+    { "action": "Close Settings, back to the composer", "necessary": false, "event": "E3" },
+    { "action": "Write the task", "necessary": true },
+    { "action": "Start, approving access", "necessary": true }
+  ],
+  "events": [
+    { "id": "E1", "cause": "Folder nested in another project: working_copy_overlaps shown as generic provider troubleshooting", "loss": "way_forward", "fix": "Specific overlap error naming the parent project, with the next action" },
+    { "id": "E2", "cause": "New project only opens after a restart", "loss": "progress", "fix": "Open the new project live, without a restart" },
+    { "id": "E3", "cause": "Composer sends the person to Settings to set up a provider", "loss": "place", "approval_needed": false, "draft_kept": true, "fix": "Reuse the signed-in provider; any remaining setup inline in the composer" },
+    { "id": "E4", "cause": "Open folder missing from All projects; reachable only via Search → Projects", "loss": "search", "main_action": true, "fix": "Open folder on All projects" },
+    { "id": "E5", "cause": "Signed-in provider set up again for this project", "loss": "search", "fix": "Reuse the signed-in provider across projects" },
+    { "id": "E6", "cause": "Check connection needed before models show", "loss": "attention", "fix": "Check on open; models appear by themselves" },
+    { "id": "E7", "cause": "Cmd+Shift+G (Go to Folder) missing in the folder picker", "loss": "attention", "fix": "Use the standard open panel with Go to Folder" }
+  ],
+  "time_to_first_result_s": null,
+  "draft_survival": null
+}

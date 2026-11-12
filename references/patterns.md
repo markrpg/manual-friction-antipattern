@@ -1,0 +1,94 @@
+# Patterns, build habits and static scan
+
+## Build habits
+
+The root cause: most software in training data is dashboards full of actions, settings pages with every toggle visible, multi-step wizards and forms that ask for everything up front. Asked to "build a UI for X", a model reaches for the middle of that, and prompts add to it ("add a settings page for the AI" asks for a control surface). An AI product can infer intent, keep context and pick defaults, yet generated interfaces still treat it as a backend the person steers with forms and buttons.
+
+The way agents build adds more. Each habit below looks sound inside one feature. Check your plan against the table before building.
+
+| Habit | Friction it produces | Qwobolt instance | Do instead |
+|---|---|---|---|
+| A control for every setting, all visible | Time, Attention | Project checks: pick a candidate and save, even when only one was found | Apply the single or best candidate; show it as a fact with Change beside it |
+| Work split into separate screens and stages | Place, Time | Provider set up in Settings, away from the composer that needs it | One stage per necessary step; missing setup opens inline in the flow |
+| Confirmation before low-risk actions | Time | Continue draft asks for a second confirmation | Act, show what happened, offer Undo |
+| Each feature built and tested alone; nobody walks the whole path | Progress, Way forward | Adding a project worked; opening it in the running app did not | Walk the journey end to end in the installed app before calling it done |
+| New actions go beside the code that runs them | Search | Open folder sits on a Projects page the grid never links to | Put the action on the view that lists the items, and wherever the person would look first |
+| Safety checks copied to every level | Search, Time | Provider sign-in repeated for each project | Store each approval at its reach; ask again only when the reach changes |
+| Internal state shown as it is | Attention | Stop session lists attempt, runtime and generation IDs | Lead with what the person recognises (task name, folder); IDs behind Details |
+| Error codes added without messages | Way forward | `working_copy_overlaps` becomes provider troubleshooting | Add the message, cause and next action in the same change as the code |
+| Waiting on the app's state handed to the person | Attention | Models appear only after Check connection | Run the check on open and on change; show progress while it runs |
+| "Restart to apply" chosen because live loading is harder | Progress | New projects and tool plugins | Load live; if impossible, Restart now with full state and draft restore |
+| Proof from tests on test data | All behaviour-only kinds | Fixture tests passed; the installed app needed a restart | Tests guard logic; the installed-app walk proves the change |
+| Small native helpers skip platform basics | Attention | Folder picker without Go to Folder | Use the platform's standard panel and its shortcuts; test them |
+
+## Banned patterns with detection
+
+| # | Pattern | Class | Where it shows | How to catch it |
+|---|---|---|---|---|
+| 1 | Add/open action missing from the view that lists items | Search (3) | Screen | Review each list view: can a newcomer add or open from here? |
+| 2 | Disabled control with no visible reason | Way forward (10) | Screen | Scan 5; every disabled state needs adjacent text naming what's missing |
+| 3 | Error with no cause or next action, or the wrong cause | Way forward (10) | Screen + behaviour | Scan 2 and 3; trigger each error path during the walk |
+| 4 | "Restart to apply" / starts after restart | Progress (8) | Screen + behaviour | Scan 1; add a thing during the walk and use it without restarting |
+| 5 | Refresh/Check as the only way to see state | Attention (2) | Screen | Scan 6 |
+| 6 | Internal IDs in user-facing text | Attention (2) | Screen | Scan 7 |
+| 7 | Picker that can show one option | Time (1) | Screen | Scan 9; check what renders when the list has one item |
+| 8 | Confirmation on an undoable action | Time (1) | Screen | Scan 4 |
+| 9 | Control with no handler, a no-op, or "coming soon" | Way forward (10) | Behaviour | Scan 8; press every control on the journey |
+| 10 | Flow sends the person to Settings to finish | Place (5) | Behaviour | Scan 10 |
+| 11 | Completed setup asked again per project/workspace/item | Search (3) | Behaviour | Scan 11; walk the second-project journey with an account already connected |
+| 12 | Draft lost on detour, error, decline or restart | Progress (8) | Behaviour | Scan 12; type, interrupt, return, check |
+| 13 | Platform shortcut missing in a native window | Attention (2) | Behaviour | Try Go to Folder (⇧⌘G), paste, drag and drop in every native panel |
+
+## Static scan
+
+Run from the repository root on the files a change touches (add `-g` globs to narrow, or pipe `git diff --name-only` into `rg --files-from`). Every hit is a lead: read the code and decide whether a person meets it on a journey. Patterns are written for `rg` (ripgrep); swap to `grep -rEin` if it's missing.
+
+```bash
+# 1. Restart to apply (Progress)
+rg -n -i "restart (to|required|needed|the app)|after (a |the )?restart|relaunch|takes effect (after|on next)|reopen the app|requires? (a )?restart"
+
+# 2. Generic error copy (Way forward)
+rg -n -i "something went wrong|an? (unknown|unexpected) error|unknown error|please try again|error occurred|oops"
+
+# 3. Error codes without messages (Way forward): list codes emitted, then codes mapped to copy, and diff
+rg -o -N -i "(code|kind|reason|error_type)\s*[:=]\s*['\"][a-z0-9_.-]+['\"]" | sort -u
+rg -n -i "switch\s*\(.*(code|kind|reason)|case ['\"][a-z0-9_]+['\"]|(default|_)\s*(:|=>)"
+
+# 4. Confirmations (Time; check whether the action can be undone)
+rg -n -i "are you sure|window\.confirm|\bconfirm\(|ConfirmDialog|AlertDialog|NSAlert|\.alert\(|showConfirm"
+
+# 5. Disabled controls (Way forward if no visible reason nearby)
+rg -n "disabled(=|:|\s*\{)|\.disabled\(|isEnabled\s*=\s*false|setEnabled\(false\)" -A2
+
+# 6. Refresh / Check buttons (Attention)
+rg -n -i "['\">](refresh|reload|check (connection|status|again)|sync now|re-?scan)['\"<]"
+
+# 7. Internal IDs in UI text (Attention)
+rg -n -i "(attempt|runtime|generation|session|request|trace|run|job)[_ ]?id\b" -g '*.{tsx,jsx,vue,svelte,swift,kt,html,xib,storyboard}'
+
+# 8. No-op or unfinished handlers (Way forward)
+rg -n -i "on(Click|Press|Tap|Select)\s*=\s*\{\s*\(\)\s*=>\s*\{\s*\}\s*\}|action:\s*\{\s*\}|coming soon|not implemented|TODO.*(handler|wire|hook up|implement)"
+
+# 9. Pickers (Time when one option): check the single-item case
+rg -n "<select|<Select|Picker\(|RadioGroup|SegmentedControl|Dropdown|NSPopUpButton"
+
+# 10. Sending the person to Settings (Place) — hits outside settings code
+rg -n -i "go to settings|open settings|in settings|navigate\(['\"]/?settings|openSettings|showSettings" -g '!**/settings/**'
+
+# 11. Setup asked again per item (Search)
+rg -n -i "use in this project|for this (project|workspace)|enable for (this|project)|per[- ](project|workspace)|connect to this"
+
+# 12. Drafts held only in component state (Progress): list composers and text areas, then check persistence
+rg -n "<textarea|<TextArea|TextEditor\(|contentEditable|multiline" 
+rg -n -i "localStorage|sessionStorage|persist|draft|autosave|UserDefaults|@AppStorage|@SceneStorage"
+```
+
+For 12, every multi-line input on a main journey should appear in the second list too, keyed to its context (project, task, thread). If it doesn't, assume the draft is lost and confirm in the walk.
+
+For settings sprawl, count default-visible controls per section:
+
+```bash
+rg -c "<(Switch|Toggle|Checkbox|Input|Select|Slider|RadioGroup)\b|Toggle\(|Picker\(|TextField\(" path/to/settings
+```
+
+More than five in a section means some belong behind Advanced or should become defaults.

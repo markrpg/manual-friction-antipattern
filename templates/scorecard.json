@@ -1,0 +1,33 @@
+{
+  "journey": "Launch → add a folder → first task running",
+  "result": "First task running",
+  "build": "commit or version scored",
+  "mode": "walk",
+  "main_journey": true,
+  "starting_state": "Installed app, provider signed in, new folder outside existing projects, no workarounds learned",
+  "necessary_steps": [
+    "Open folder",
+    "Choose the folder",
+    "Write the task",
+    "Start it, approving folder access"
+  ],
+  "steps": [
+    { "action": "Open folder", "necessary": true },
+    { "action": "Wrong turn the newcomer took", "necessary": false, "event": "E1" }
+  ],
+  "events": [
+    {
+      "id": "E1",
+      "cause": "One cause, stated so the fix is obvious",
+      "loss": "search",
+      "main_action": false,
+      "approval_needed": false,
+      "draft_kept": true,
+      "fix": "What removes it"
+    }
+  ],
+  "time_to_first_result_s": null,
+  "draft_survival": [
+    { "interruption": "Detour, error, retry, decline or restart", "kept": true }
+  ]
+}
