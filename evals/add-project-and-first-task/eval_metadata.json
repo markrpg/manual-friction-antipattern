@@ -1,0 +1,13 @@
+{
+  "eval_name": "add-project-and-first-task",
+  "prompt": "There is no way to add a new project in Qwobolt at all right now, and I need one. Someone should be able to point it at a folder and run their first task in it.\n\nKeep it as plain HTML and JS in a single app.html — no build step, I just open it in a browser. Copy app.html into your output folder and work there. Save every file you touch.",
+  "assertions": [
+    "A journey card is written before the UI code, listing the steps only the person can supply and how many steps that comes to.",
+    "The action for adding a project appears on the view that lists projects, not only behind Search or in Settings.",
+    "A newly added project can be opened and used in the running app with no page reload, no app restart and no 'Refresh to apply' step.",
+    "The provider already signed in is used for the new project with no per-project setup step such as 'Use in this project'.",
+    "Text typed in the composer is still there after a failure, a decline or a detour.",
+    "Errors shown by the flow name their cause and the next action; no generic copy such as 'Something went wrong' or 'Please try again'.",
+    "The finished work reports a friction scorecard with the friction ratio, the friction score, each friction event with its loss class and weight, and any budget failures."
+  ]
+}

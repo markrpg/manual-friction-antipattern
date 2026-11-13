@@ -1,0 +1,11 @@
+schema_version: "1.1"
+name: add-project-and-first-task
+expected_outcome: |
+  The agent adds a way to create a project and run a first task, and does it without
+  making the person do work the product could do itself: the action is on the view
+  that lists projects, a new project is usable immediately with no reload or restart,
+  the already signed-in provider is reused rather than set up again, typed text survives
+  failures, and any error names its cause and the next action. A journey card is written
+  before the code, and the finished work reports a friction scorecard against the budget.
+context:
+  scaffold_script: place-files.sh

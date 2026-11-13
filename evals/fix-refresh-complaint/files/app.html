@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Task board</title>
+<style>
+  body { font: 15px/1.5 -apple-system, system-ui, sans-serif; margin: 0; color: #1c1c1e; background: #f5f5f7; }
+  main { max-width: 720px; margin: 0 auto; padding: 28px 20px; }
+  h1 { font-size: 22px; margin: 0 0 16px; }
+  ul { list-style: none; padding: 0; margin: 0 0 16px; }
+  li { background: #fff; border: 1px solid #d9d9de; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+  li button { font: inherit; border: 1px solid #c7c7cc; background: #fff; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  button { font: inherit; padding: 8px 14px; border: 1px solid #c7c7cc; background: #fff; border-radius: 8px; cursor: pointer; }
+  .row { display: flex; gap: 10px; margin-bottom: 16px; }
+  input { font: inherit; padding: 8px 10px; border: 1px solid #c7c7cc; border-radius: 8px; flex: 1; }
+  .muted { color: #6b6b70; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Task board</h1>
+  <div class="row">
+    <input id="new-task" placeholder="Add a task">
+    <button id="add">Add</button>
+    <button id="refresh">Refresh</button>
+  </div>
+  <p class="muted">Press Refresh to see changes made in other tabs.</p>
+  <ul id="tasks"></ul>
+</main>
+
+<script>
+// The board reads the shared task list from the server. It polls nothing and
+// subscribes to nothing: the list is fetched when the page loads and whenever
+// the person presses Refresh.
+const API = 'https://example.test/api/tasks';
+
+async function loadTasks() {
+  const res = await fetch(API);
+  const tasks = await res.json();
+  const ul = document.getElementById('tasks');
+  ul.innerHTML = '';
+  for (const t of tasks) {
+    const li = document.createElement('li');
+    li.innerHTML = '<span>' + t.title + '</span>';
+    const b = document.createElement('button');
+    b.textContent = 'Done';
+    b.onclick = () => deleteTask(t.id);
+    li.appendChild(b);
+    ul.appendChild(li);
+  }
+}
+
+async function deleteTask(id) {
+  await fetch(API + '/' + id, { method: 'DELETE' });
+  loadTasks();
+}
+
+document.getElementById('refresh').onclick = loadTasks;
+
+document.getElementById('add').onclick = async () => {
+  const input = document.getElementById('new-task');
+  const title = input.value.trim();
+  if (!title) return;
+  await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title })
+  });
+  input.value = '';
+  loadTasks();
+};
+
+loadTasks();
+</script>
+</body>
+</html>

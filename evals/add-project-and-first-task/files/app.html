@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qwobolt</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 -apple-system, system-ui, sans-serif; margin: 0; color: #1c1c1e; background: #f5f5f7; }
+  header { background: #fff; border-bottom: 1px solid #d9d9de; padding: 12px 20px; display: flex; gap: 8px; }
+  header button { font: inherit; padding: 6px 12px; border: 1px solid #c7c7cc; background: #fff; border-radius: 6px; cursor: pointer; }
+  header button[aria-current="page"] { background: #1c1c1e; color: #fff; border-color: #1c1c1e; }
+  main { max-width: 880px; margin: 0 auto; padding: 28px 20px; }
+  h1 { font-size: 22px; margin: 0 0 16px; }
+  h2 { font-size: 15px; margin: 24px 0 8px; color: #6b6b70; text-transform: uppercase; letter-spacing: .04em; }
+  #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .card { background: #fff; border: 1px solid #d9d9de; border-radius: 10px; padding: 14px; }
+  .card strong { display: block; }
+  .card span { color: #6b6b70; font-size: 13px; }
+  textarea { width: 100%; min-height: 120px; font: inherit; padding: 12px; border: 1px solid #c7c7cc; border-radius: 8px; box-sizing: border-box; }
+  button.primary { font: inherit; padding: 8px 16px; border: 0; border-radius: 8px; background: #1c1c1e; color: #fff; cursor: pointer; }
+  .row { display: flex; gap: 10px; align-items: center; margin: 12px 0; }
+  .muted { color: #6b6b70; }
+  #empty { color: #6b6b70; padding: 32px 0; }
+</style>
+</head>
+<body>
+<header>
+  <button id="nav-all" aria-current="page">All projects</button>
+  <button id="nav-search">Search</button>
+  <button id="nav-settings">Settings</button>
+</header>
+
+<main>
+  <section id="view-all">
+    <h1>All projects</h1>
+    <div id="grid"></div>
+    <div id="empty" hidden>No projects yet.</div>
+  </section>
+
+  <section id="view-search" hidden>
+    <h1>Search</h1>
+    <input id="search-input" placeholder="Search commands" style="width:100%;padding:10px;font:inherit;border:1px solid #c7c7cc;border-radius:8px">
+    <div id="search-results" class="muted" style="margin-top:12px">No results.</div>
+  </section>
+
+  <section id="view-settings" hidden>
+    <h1>Settings</h1>
+    <h2>Providers</h2>
+    <div class="row"><span id="provider-line">Claude Code — signed in</span></div>
+  </section>
+
+  <section id="view-composer" hidden>
+    <h1 id="composer-title">Task</h1>
+    <textarea id="task" placeholder="What should I do?"></textarea>
+    <div class="row">
+      <button class="primary" id="start">Start</button>
+      <span class="muted" id="composer-msg"></span>
+    </div>
+  </section>
+</main>
+
+<script>
+// Qwobolt — an agent workbench. The user is signed in to Claude Code already.
+const state = {
+  projects: [{ name: 'design-notes', tasks: 2 }, { name: 'client-site', tasks: 0 }],
+  provider: { name: 'Claude Code', signedIn: true },
+  current: null,
+  view: 'all'
+};
+
+function show(view) {
+  state.view = view;
+  for (const v of ['all', 'search', 'settings', 'composer']) {
+    document.getElementById('view-' + v).hidden = v !== view;
+  }
+  for (const [id, v] of [['nav-all', 'all'], ['nav-search', 'search'], ['nav-settings', 'settings']]) {
+    const b = document.getElementById(id);
+    if (v === view) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  }
+  if (view === 'all') render();
+}
+
+function render() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  for (const p of state.projects) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = '<strong>' + p.name + '</strong><span>' + p.tasks + ' tasks</span>';
+    card.onclick = () => openProject(p);
+    grid.appendChild(card);
+  }
+  document.getElementById('empty').hidden = state.projects.length > 0;
+}
+
+function openProject(p) {
+  state.current = p;
+  document.getElementById('composer-title').textContent = p.name;
+  document.getElementById('composer-msg').textContent = '';
+  show('composer');
+}
+
+document.getElementById('nav-all').onclick = () => show('all');
+document.getElementById('nav-search').onclick = () => show('search');
+document.getElementById('nav-settings').onclick = () => show('settings');
+
+document.getElementById('search-input').oninput = (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  const box = document.getElementById('search-results');
+  const commands = ['Add a project', 'Add a plugin', 'Restart Qwobolt'];
+  const hits = commands.filter(c => c.toLowerCase().includes(q));
+  box.textContent = q ? (hits.length ? hits.join(' · ') : 'No results.') : 'No results.';
+};
+
+document.getElementById('start').onclick = () => {
+  const text = document.getElementById('task').value.trim();
+  const msg = document.getElementById('composer-msg');
+  if (!text) { msg.textContent = 'Write a task first.'; return; }
+  msg.textContent = 'Starting ' + state.current.name + '…';
+};
+
+render();
+</script>
+</body>
+</html>

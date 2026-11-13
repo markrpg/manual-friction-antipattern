@@ -1,0 +1,9 @@
+schema_version: "1.1"
+name: score-existing-flow
+expected_outcome: |
+  The agent produces a scorecard with a friction ratio and friction score, names the
+  friction causes planted in the code as separate events with the loss classes and
+  weights the measure assigns, ranks the fixes by points removed, and reports the
+  journey as broken rather than offering a general list of UI improvements.
+context:
+  scaffold_script: place-files.sh

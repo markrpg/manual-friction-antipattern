@@ -8,17 +8,26 @@ description: >
   that do nothing, pickers with one option, confirmations on undoable actions,
   Refresh/Check buttons, internal IDs in UI text and lost drafts. Use before
   designing or building any user-facing flow, screen, onboarding, settings
-  page, error state or approval prompt; when reviewing a design, screenshot or
-  UI diff; and when verifying a UI change in the running app. Also use when the
-  user says "manual friction", "friction score", "score this journey",
-  "friction audit", "antidesign" or invokes /manual-friction.
+  page, form, error state or approval prompt; when reviewing a design,
+  screenshot or UI diff; and when verifying a UI change in the running app.
+  Also use whenever someone describes a flow as clunky, fiddly, long-winded,
+  confusing, heavy, a slog, too many clicks, too many steps, too much
+  hand-holding, babysitting, busywork, setup fatigue, "this should just work",
+  or asks for a UX review, an audit of a flow, an onboarding pass, or a
+  settings page. Also use when the user says "manual friction", "friction
+  score", "score this journey", "friction audit", "antidesign" or invokes
+  /manual-friction.
 ---
 
 # Manual Friction
 
 Manual friction is work a person does that the product already had enough information to do itself: a click, a choice, typing, a trip somewhere else to find something, a restart, or working out what went wrong. "Enough information" is what the product knew at that moment: accounts already signed in, folders already chosen, settings already made, the only option available, the cause of its own error.
 
-Generated interfaces collect it by default. Training data is mostly dashboards, settings pages with every toggle visible, wizards and up-front forms, built for software that only did what it was told. Instructions alone don't hold against that prior, so this skill has two halves. Parts 1–3 steer what you design and build. Parts 4–5 score the result, and **the score decides whether a change passes**.
+Generated interfaces collect it by default. Training data is mostly dashboards, settings pages with every toggle visible, wizards and up-front forms, built for software that only did what it was told. Instructions alone don't hold against that prior, so this skill has two halves. Parts 1–3 steer what you design and build. Parts 4–5 score the result.
+
+**The score decides.** Score twice: on the plan before you build, and in the running app before you call it done. Review alone never passes a change — in the calibration run ([examples/small-repo.md](examples/small-repo.md)) 28 of 33 points only showed up when someone used the running app.
+
+**The numbers are the product of the audit.** A diagnosis without a comparable number is worthless after one release: nobody can tell whether a fix helped. The one file that must survive is the scorecard, and the one table that must grow is the leader board. Everything else — the report, the screenshots, the notes — is supporting.
 
 | Mode | When | Parts |
 |---|---|---|
@@ -26,7 +35,7 @@ Generated interfaces collect it by default. Training data is mostly dashboards, 
 | Review | A design, mock, screenshot or UI diff | 4 Scoring review |
 | Walk | The change runs | 5 Installed-app walk |
 
-A change a person will see runs all five. Review alone never passes it: in the calibration run ([examples/small-repo.md](examples/small-repo.md)) 28 of 33 points only showed up when someone used the running app.
+If the skill is running somewhere that cannot read this whole file, work from this one line: *a person should never do work the product already had enough information to do itself; score the journey and keep the numbers.*
 
 ## The test for every step
 
@@ -48,6 +57,13 @@ Three rules follow, and they settle most design arguments:
 - A choice the product can make with confidence, which the person can change later, is a default.
 - An approval already given for the same risk is not a new approval.
 
+**When you can't place a step, walk this tree** instead of guessing:
+
+- Could the product have known this at that moment? No → necessary. Yes → keep going.
+- Is it a choice? How many real options are there? One → not a choice; pick it. Several and the product can rank them → a default; pick the best and show it. Several and it can't → necessary.
+- Is it an approval? What area does it cover? Already given for that area → not a new approval; ask again only when the area changes. Not given → where does the risk live? It belongs inside that flow, or the trip to it is Place (5).
+- Is it a wait? Could the product be doing the work while the person reads the screen? Yes → it isn't a step for them.
+
 The reach table (sign-in covers the account across every project, folder access covers that folder, deleting covers one action, and so on) is in [references/measure.md](references/measure.md#reach-of-an-approval).
 
 ## Part 1: Journey first
@@ -59,6 +75,8 @@ Before any screen, component or endpoint, write the journey card. Copy [template
 - **Necessary steps**: numbered, each tagged with its kind from the list above. This is the denominator. Write it before you look at any existing UI, or the UI will tell you what's "necessary".
 - **Approvals**: each with its reach and when it must be asked again.
 - **Target**: friction ratio ≤ 1.5, score ≤ 5, no Way forward or Progress events.
+
+Then **score the plan before you build it**: walk the design you intend on paper, count the stages between intent and result, the controls the person has to work and the decisions the screen shows, and record that as the planned score in the card. A plan that is already over budget is over budget before anyone writes a line.
 
 Then plan the build against the card. Any step the plan needs that isn't on the card is friction you are about to build. Remove it, turn it into a default, or show which of the five kinds it belongs to.
 
@@ -72,14 +90,31 @@ Rules while building:
 
 - **Reuse what's connected.** An account signed in once works in every project. Ask only when a compatibility or permission check fails, and ask inline.
 - **Missing setup opens where it's needed**, inside the flow, as a sheet or inline panel. The person returns to the same draft.
-- **Live state.** Status, models, connections and lists update on their own. A Refresh or Check button is never the only way to see current state.
+- **Live state.** Status, models, connections and lists update on their own. A Refresh or Check button is never the only way to see current state. A retry the product could run itself is the same thing: retry on its own and show "Retrying".
 - **Live loading.** Something just added or connected works in the running app. If a restart truly can't be avoided, offer Restart now, and restore the view and the draft afterwards.
-- **Act, then offer Undo** for anything that can be undone. Ask first only when intent is unclear or the stakes are high: delete, overwrite, spend, new access, untrusted import, secrets.
 - **Drafts survive** every detour, error, retry, decline and restart. Persist typed input keyed to its context; don't keep it only in component state.
 - **Every error code has a message** that names the cause and the next action, written in the same change that adds the code. A specific code must never fall through to a generic message.
 - **A disabled control says what it needs** ("Choose a folder first"), next to the control.
 - **Platform basics** in native windows: Go to Folder, paste, standard shortcuts, drag and drop.
 - **Plain language.** No internal IDs or codes in user-facing text; put them behind a details disclosure.
+- **One place writes the setting.** Settings, forms and preferences are usually written in more than one place: the screen, the handler, sometimes a config or a default. Check that the control the person presses is the one that changes the state the flow reads, and that a control with no handler never ships (scan 8 in [references/patterns.md](references/patterns.md#static-scan)).
+
+### Ask first, or act and offer Undo
+
+One standing choice for every action. Don't mix them inside a flow.
+
+| | Ask first | Act and offer Undo |
+|---|---|---|
+| When | Intent is unclear, or the stakes are high: delete, overwrite, spend, new access, untrusted import, secrets | Everything reversible |
+| The person sees | What it allows, for how long, and what happens if declined | What just happened, with Undo |
+| If they decline or undo | The draft is kept and a way forward stays open | Back to where they were |
+| Counted as | Necessary, once inside its reach | Nothing |
+
+A confirmation on something that can be undone is a Time event (1) each. A confirm that then leaves a dead button behind it is Way forward (10) — see banned pattern 8.
+
+### Error recipe
+
+Every error the person can meet has three parts in this order: **what happened** in their words, **why**, and **the next action** as a control on the error itself. Not "Something went wrong", not a code, not an instruction to go and find something. If the error can only be fixed by the product, the error is wrong: fix it instead.
 
 Control budgets, which can be counted on a design before anyone uses it:
 
@@ -103,13 +138,15 @@ Refuse these in any design or code you produce, and flag them in anything you re
 2. A disabled control with no visible reason.
 3. An error with no cause or next action, or one that points at the wrong cause.
 4. "Restart to apply", above all with no Restart now button.
-5. Refresh or Check as the only way to see current state.
+5. Refresh, Check or Try again as the only way to see state or make progress.
 6. A confirmation led by internal IDs, or internal IDs in any user-facing text.
 7. A picker, dropdown or radio group that can show a single option.
-8. A confirmation dialog on an action that can be undone.
+8. A confirm dialog on an undoable action that then leaves the button dead or the work undone.
 9. A control with no handler, a no-op handler, or "coming soon".
 10. A flow that sends the person to Settings to finish what they started.
 11. Setup the person already completed, asked again for each project, workspace or item.
+12. A form that asks for something the product already knows, or asks for it before it's needed.
+13. Feedback the person has to scroll to see.
 
 On a code diff, run the static scan in [references/patterns.md](references/patterns.md#static-scan). Its hits are leads; confirm each by reading the code.
 
@@ -120,9 +157,9 @@ For a design, mock, screenshot or diff:
 1. Take the journey card (write it if missing).
 2. Walk the planned path through the design on paper, as the newcomer. Include the likely wrong turns: where would a newcomer look first for the main action?
 3. Classify every friction event with the table below, plus the control budgets above.
-4. Record events in a scorecard ([templates/scorecard.json](templates/scorecard.json)) and run the scorer.
+4. Write the events to a scorecard and run the scorer. The scorecard is the deliverable, not the report.
 
-A design that passes review can still score in the broken band once used. Review passes nothing on its own; it catches the screen-visible kinds early and cheaply.
+A design that passes review can still score in the broken band once used. Review catches the screen-visible kinds early and cheaply; it passes nothing on its own.
 
 ## Part 5: Installed-app walk
 
@@ -133,7 +170,19 @@ This part decides whether a user-visible change passes. Procedure in [references
 3. Record every step, including wrong turns and waits. Deliberately try the wrong turns a newcomer would take: the nested or overlapping item, the missing connection, the error path, the restart.
 4. At every interruption (detour, error, retry, decline, restart), check whether typed text is still there. Record kept or lost.
 5. Test each step with the two questions, group friction steps into events, weight them, run the scorer.
-6. After fixes, rescore from the same starting state.
+
+**Write two files before you report anything**, so the work survives the session:
+
+- `scorecard.json` — the events, the steps, the ratio, the score, the two supporting numbers. Use [templates/scorecard.json](templates/scorecard.json). Every event carries `id`, `cause`, `loss` and `fix`; every step that is friction names its event id. Attach the evidence to the events themselves (`screen` or `behaviour`, and where it was seen) rather than leaving it in a report nobody can re-check.
+- A row in `friction-leaderboard.md`, in the product's own repo, one row per journey per build:
+
+```markdown
+| Date | Build | Journey | Steps ÷ necessary | Score | Band | Time to first result | Drafts |
+```
+
+Without those two files the audit didn't happen. A chat summary is not a scorecard.
+
+After fixes, rescore from the same starting state and add the new row. The pair of rows is what says whether a fix helped.
 
 If the walk can't run (no build, no access, the tool was denied), the friction check is **pending**. Say what blocks it and the smallest thing that would unblock it. Never report a pass from review or unit tests alone; fixture tests miss every behaviour-only kind.
 
@@ -190,6 +239,7 @@ When you score a journey, report:
 - The events table from the scorer.
 - Verdict against the budget, with each failing rule.
 - Fix-first list, ordered by points removed, with the points each one covers.
+- Where the scorecard and the leader board row are.
 
 ## Limits
 

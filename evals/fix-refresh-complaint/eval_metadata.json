@@ -1,0 +1,10 @@
+{
+  "eval_name": "fix-refresh-complaint",
+  "prompt": "People keep telling me they have to press Refresh to see tasks that got added somewhere else. Fix it. Copy app.html into your output folder and work there. Save every file you touch.",
+  "assertions": [
+    "Tasks added elsewhere appear in the list with the person pressing nothing: no Refresh button, no reload prompt, no manual check.",
+    "The fix does not use a page reload, and does not trade the Refresh button for another control the person has to work.",
+    "The fix adds no confirmation dialog and sends nobody to a settings page.",
+    "The changed flow adds no step the person has to do that the product had enough information to do itself."
+  ]
+}

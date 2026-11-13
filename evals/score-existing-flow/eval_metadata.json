@@ -1,0 +1,14 @@
+{
+  "eval_name": "score-existing-flow",
+  "prompt": "People tell me using this app is a slog but nobody can say exactly why. Work out where the pain is getting from opening a project to a task running, rank what to fix first, and give me numbers I can keep so I can tell whether a fix helped. Save your work.",
+  "assertions": [
+    "A scorecard is produced that records the friction ratio and the friction score for the journey from opening a project to a task running.",
+    "The report names the restart needed before a newly added thing can be used as a Progress loss worth 8 points, and does not merge it with other events.",
+    "The report names the generic error shown when the add fails as a Way forward loss worth 10 points and treats it as the most costly event.",
+    "The report counts the detour from the composer to Settings and the per-project 'Use in this project' step as two separate events, Place (5) and Search (3).",
+    "The report names both the Refresh button as the only way to see current state and the internal attempt, runtime and generation IDs shown on stopping a session as Attention losses worth 2 points each.",
+    "The report gives a total score of 16 or more and calls the journey broken.",
+    "The fixes are ordered by how many points they remove, and the report states the points each one covers.",
+    "Every event is weighted with one of the measure's six loss classes at its stated weight: Time 1, Attention 2, Search 3, Place 5, Progress 8, Way forward 10."
+  ]
+}

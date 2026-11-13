@@ -38,6 +38,9 @@ The way agents build adds more. Each habit below looks sound inside one feature.
 | 11 | Completed setup asked again per project/workspace/item | Search (3) | Behaviour | Scan 11; walk the second-project journey with an account already connected |
 | 12 | Draft lost on detour, error, decline or restart | Progress (8) | Behaviour | Scan 12; type, interrupt, return, check |
 | 13 | Platform shortcut missing in a native window | Attention (2) | Behaviour | Try Go to Folder (⇧⌘G), paste, drag and drop in every native panel |
+| 14 | Form asks for something the product already knows, or before it's needed | Time (1) / Search (3) | Screen | Scan 13; for every field, ask what happens if it is left out and the product fills it in |
+| 15 | Confirmation the person has to scroll to see | Attention (2) | Screen + behaviour | Scan 14; check the viewport after each action at the default scroll position |
+| 16 | Manual retry ("Try again") where the product could retry itself | Attention (2) | Screen + behaviour | Scan 1; a retry the product runs alone is not a control |
 
 ## Static scan
 
@@ -84,6 +87,18 @@ rg -n -i "localStorage|sessionStorage|persist|draft|autosave|UserDefaults|@AppSt
 ```
 
 For 12, every multi-line input on a main journey should appear in the second list too, keyed to its context (project, task, thread). If it doesn't, assume the draft is lost and confirm in the walk.
+
+```bash
+# 13. Fields asking for what the product already knows (Time / Search)
+rg -n "placeholder=|<label|name=\"[a-z_]+\"" -g '*.{tsx,jsx,html,vue,svelte,swift,kt}'
+# then for each field ask: what breaks if the product fills this in? Nothing → cut it.
+
+# 14. Feedback the person must scroll to see (Attention) — behaviour, not regex.
+# Take the viewport at the default scroll position after each action and note
+# whether the result is visible without scrolling.
+```
+
+**Two writers.** A setting is usually written in more than one place: the screen, the handler that applies it, and sometimes a config, a default or a per-item copy. Most "the button does nothing" bugs are these two disagreeing. For every control you touch, trace once from the control to the state the flow actually reads, and confirm the scan 8 hit (a no-op handler) is gone from that path. Where the product keeps per-item copies of a setting, prefer the account-level or project-level value with the per-item one as an override.
 
 For settings sprawl, count default-visible controls per section:
 
