@@ -1,3 +1,5 @@
+![Let me do the thing: a Settings window nesting Advanced, Configure, More settings and Confirm windows, with the Run button buried in the last one](assets/banner.jpg)
+
 # Manual Friction Antipattern
 
 An agent skill that keeps manual friction out of the products AI agents build, and measures what gets through.
