@@ -18,10 +18,24 @@ A main journey passes with a friction ratio of 1.5 or less, a score of 5 or less
 
 ## Install
 
-Claude Code:
+## Install
+
+One checkout, linked into each agent's skills folder. `./install.sh` finds every agent folder you have and adds a link, so a pull updates all of them.
 
 ```bash
-git clone https://github.com/markrpg/manual-friction-antipattern ~/.claude/skills/manual-friction
+git clone https://github.com/markrpg/manual-friction-antipattern
+cd manual-friction-antipattern
+./install.sh
+```
+
+For one agent at a time:
+
+```bash
+# Claude Code
+ln -s "$PWD" ~/.claude/skills/manual-friction
+
+# Codex
+ln -s "$PWD" ~/.codex/skills/manual-friction
 ```
 
 It loads when you design, build or review UI, or when you type `/manual-friction`.
