@@ -6,7 +6,9 @@ description: >
   up again per project, restart-to-apply, detours to Settings from the flow
   that needs them, generic errors, greyed-out buttons with no reason, buttons
   that do nothing, pickers with one option, confirmations on undoable actions,
-  Refresh/Check buttons, internal IDs in UI text and lost drafts. Use before
+  Refresh/Check buttons, internal IDs in UI text, lost drafts, and buttons
+  that exist only because of how the app stores the work ("Review saved
+  conversation" for a conversation already on screen). Use before
   designing or building any user-facing flow, screen, onboarding, settings
   page, form, error state or approval prompt; when reviewing a design,
   screenshot or UI diff; and when verifying a UI change in the running app.
@@ -63,6 +65,7 @@ Three rules follow, and they settle most design arguments:
 - Is it a choice? How many real options are there? One → not a choice; pick it. Several and the product can rank them → a default; pick the best and show it. Several and it can't → necessary.
 - Is it an approval? What area does it cover? Already given for that area → not a new approval; ask again only when the area changes. Not given → where does the risk live? It belongs inside that flow, or the trip to it is Place (5).
 - Is it a wait? Could the product be doing the work while the person reads the screen? Yes → it isn't a step for them.
+- Is it a control? What decision does it let the person make? If the only answer is which internal path the app takes (open the saved copy, resume the prepared task, review the stored draft), the app takes that path itself.
 
 The reach table (sign-in covers the account across every project, folder access covers that folder, deleting covers one action, and so on) is in [references/measure.md](references/measure.md#reach-of-an-approval).
 
@@ -116,6 +119,16 @@ A confirmation on something that can be undone is a Time event (1) each. A confi
 
 Every error the person can meet has three parts in this order: **what happened** in their words, **why**, and **the next action** as a control on the error itself. Not "Something went wrong", not a code, not an instruction to go and find something. If the error can only be fixed by the product, the error is wrong: fix it instead.
 
+### Controls follow what the person is doing
+
+AI-built interfaces often give every internal state or operation its own button, screen or flow. Each one makes sense alone. Together they turn one intention into several decisions, and the person has to work out where the app put their work before they can carry on with it.
+
+Start with what the person is trying to do and where they will naturally go to do it. Restore state and do the housekeeping there. Add a separate control only when it gives the person a genuinely different choice.
+
+For every button, link or screen you add, ask: **what decision does this let the person make?** If the answer is "which internal path to take", the app makes it.
+
+Example: a person comes back to Qwobolt's Hub to keep writing. The app had stored their work as a prepared task, so it offered *Review saved conversation*, with the conversation already on screen. The fix restores the text and choices into the chat box. They edit and press Continue, and any review the work requires appears before an agent starts.
+
 Control budgets, which can be counted on a design before anyone uses it:
 
 | Count | Budget | Each one over |
@@ -125,10 +138,11 @@ Control budgets, which can be counted on a design before anyone uses it:
 | Primary actions per screen | Exactly one stands out | Attention (2) |
 | Stages between intent and result | One per necessary step | Time (1); Place (5) if it leaves the current view |
 | Confirmations on undoable actions | 0 | Time (1) each |
+| Controls whose only decision is an internal path (saved copy, prepared task, stored draft, staging step) | 0 | Attention (2) each; Place (5) if it opens another view |
 
 An approval is necessary only when all of these hold: it's asked once inside its reach; it's asked where the risk is, inside the flow that needs it; it says what it allows, for how long and what happens if declined; the draft is kept whichever way the person answers; declining leaves a way forward. Each failure scores; see [references/measure.md](references/measure.md#when-approval-is-friction).
 
-The agent build habits that produce friction, each with its replacement, are in [references/patterns.md](references/patterns.md#build-habits). Read that table before building a new flow. The habits feel like good engineering from inside one feature: a control for every setting, a new screen per stage, a confirmation "to be safe", the new action placed next to the code that runs it, a safety check repeated at every level, "restart to apply" because live loading is harder, tests on fixtures as the proof.
+The agent build habits that produce friction, each with its replacement, are in [references/patterns.md](references/patterns.md#build-habits). Read that table before building a new flow. The habits feel like good engineering from inside one feature: a control for every setting, a button for every internal state, a new screen per stage, a confirmation "to be safe", the new action placed next to the code that runs it, a safety check repeated at every level, "restart to apply" because live loading is harder, tests on fixtures as the proof.
 
 ## Part 3: Banned patterns
 
@@ -147,6 +161,7 @@ Refuse these in any design or code you produce, and flag them in anything you re
 11. Setup the person already completed, asked again for each project, workspace or item.
 12. A form that asks for something the product already knows, or asks for it before it's needed.
 13. Feedback the person has to scroll to see.
+14. A button, screen or flow that exists only because of how the app stores or runs the work ("Review saved conversation", "Resume prepared task", "Open draft"), when the work could be restored where the person already is.
 
 On a code diff, run the static scan in [references/patterns.md](references/patterns.md#static-scan). Its hits are leads; confirm each by reading the code.
 

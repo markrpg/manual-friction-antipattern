@@ -143,6 +143,9 @@ Exposed controls and split-up flows are friction too: decisions and stages the p
 | Primary actions per screen | Exactly one stands out | Attention (2) when none does, or several share equal weight |
 | Stages between intent and result | One per necessary step | Time (1) per extra stage; Place (5) if it leaves the current view |
 | Confirmations on actions that can be undone | 0: act, show what happened, offer Undo | Time (1) each |
+| Controls whose only decision is an internal path: a separate button, screen or flow for a saved copy, a prepared task, a stored draft or a staging step | 0: restore the work where the person goes next | Attention (2) each; Place (5) if it opens another view |
+
+**Implementation-led controls.** The review question for any extra control is what decision it lets the person make. If the answer is only which internal path the app takes, the person is being asked to learn how the app is built, and the app should take the path itself.
 
 **Ask or act.** The product asks before acting only when it is unsure of the person's intent or the stakes are high. Otherwise it acts, shows what it did, and offers Undo. Actions appear beside the work they apply to, and detail stays behind a disclosure until someone opens it.
 
