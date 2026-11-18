@@ -3,22 +3,17 @@ name: manual-friction
 description: >
   Prevents and measures manual friction: work a person does that the product
   already had enough information to do itself. Catches signed-in accounts set
-  up again per project, restart-to-apply, detours to Settings from the flow
-  that needs them, generic errors, greyed-out buttons with no reason, buttons
-  that do nothing, pickers with one option, confirmations on undoable actions,
-  Refresh/Check buttons, internal IDs in UI text, lost drafts, and buttons
-  that exist only because of how the app stores the work ("Review saved
-  conversation" for a conversation already on screen). Use before
-  designing or building any user-facing flow, screen, onboarding, settings
-  page, form, error state or approval prompt; when reviewing a design,
-  screenshot or UI diff; and when verifying a UI change in the running app.
-  Also use whenever someone describes a flow as clunky, fiddly, long-winded,
-  confusing, heavy, a slog, too many clicks, too many steps, too much
-  hand-holding, babysitting, busywork, setup fatigue, "this should just work",
-  or asks for a UX review, an audit of a flow, an onboarding pass, or a
-  settings page. Also use when the user says "manual friction", "friction
-  score", "score this journey", "friction audit", "antidesign" or invokes
-  /manual-friction.
+  up again per project, restart-to-apply, detours to Settings, generic errors,
+  greyed-out or dead buttons, one-option pickers, confirmations on undoable
+  actions, Refresh buttons, internal IDs in UI text, lost drafts, and buttons
+  that exist only because of how the app stores the work. Use before designing
+  or building any user-facing flow, screen, onboarding, settings page, form,
+  error state or approval prompt; when reviewing a design, screenshot or UI
+  diff; and when verifying a UI change in the running app. Also use when
+  someone calls a flow clunky, fiddly, confusing, too many clicks or steps,
+  busywork, or "this should just work", or asks for a UX review or flow
+  audit, or says "manual friction", "friction score", "score this journey",
+  "antidesign" or /manual-friction.
 ---
 
 # Manual Friction
