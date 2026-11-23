@@ -2,19 +2,18 @@
 name: manual-friction
 description: >
   Prevents and measures manual friction: work a person does that the product
-  already had enough information to do itself. Catches signed-in accounts set
-  up again per project, restart-to-apply, detours to Settings, generic errors,
-  greyed-out or dead buttons, one-option pickers, confirmations on undoable
-  actions, Refresh buttons, internal IDs in UI text, lost drafts, buttons
-  that exist only because of how the app stores the work, wordy labels,
-  every feature exposed at once, and debug tools left in production. Use
-  before designing
-  or building any user-facing flow, screen, onboarding, settings page, form,
-  error state or approval prompt; when reviewing a design, screenshot or UI
-  diff; and when verifying a UI change in the running app. Also use when
-  someone calls a flow clunky, fiddly, confusing, too many clicks or steps,
-  busywork, or "this should just work", or asks for a UX review or flow
-  audit, or says "manual friction", "friction score", "score this journey",
+  already had enough information to do itself. Catches accounts set up again
+  per project, restart-to-apply, detours to Settings, generic errors, dead or
+  unexplained disabled buttons, one-option pickers, confirms on undoable
+  actions, Refresh buttons, internal IDs, lost drafts, controls that mirror
+  how the app stores work, wordy labels, every feature exposed at once, and
+  debug tools left in production. Use before building or changing any
+  user-facing screen or flow, including small fixes and adding an option,
+  setting or model, plus onboarding, forms, errors and approval prompts; when
+  reviewing a design, screenshot or UI diff; and when verifying a UI change
+  in the running app. Also use when someone calls a flow clunky, fiddly,
+  confusing, a slog, too many clicks, or "this should just work", asks for a
+  UX review or flow audit, or says "manual friction", "friction score",
   "antidesign" or /manual-friction.
 ---
 
@@ -138,6 +137,8 @@ Agents build screens that mirror the implementation. Every capability they wrote
 
 Behind all three sits a habit of proving that something was implemented. For each element, ask what the person loses if it goes. If the only loss is evidence that a feature exists, it goes.
 
+**Keep the state the person relies on.** Cutting exposure removes controls and words. State stays: the current selection, whether it's connected, progress, errors, and whether the last action worked. Before you remove any status line or indicator, name where the person sees that state afterwards. If the answer is nowhere, it stays, in fewer words. In the example below, "Connected" survives the cut.
+
 The agent's version of a model picker:
 
 > **AI Model Configuration and Runtime Management**
@@ -161,7 +162,7 @@ Every capability survives. A change applies when it's made, the connection is ch
 
 **Simplify by the score.** A shorter screen helps only when the journey gets cheaper. Removing the label that explains an unfamiliar control adds an Attention event; hiding state the person needs before they trust the result adds one; trading a visible button for an extra click raises the ratio. Rescore and keep whichever version scores lower.
 
-**Reassess after every feature.** A session that adds a feature tends to append its controls and leave the rest of the screen alone, so a clean screen degrades release by release. After adding anything visible, review the whole screen it lands on: which layer the new control belongs in, whether an existing control now duplicates it, whether the primary action still stands out. Record visible controls and words for each screen in the scorecard (`screens`). A rise in either with no drop in the score is a regression to look at; the counts are signals, and a lower count with a higher score is worse.
+**Reassess after every feature.** A session that adds a feature tends to append its controls and leave the rest of the screen alone, so a clean screen degrades release by release. After adding anything visible, review the whole screen it lands on: which layer the new control belongs in, whether an existing control now duplicates it, whether the primary action still stands out. When a change touches a screen, count its visible controls and words before you edit it and again after, and record both in the scorecard (`screens`: `controls_before`, `words_before`, `controls`, `words`). A rise in either with no drop in the score is a regression to look at; the counts are signals, and a lower count with a higher score is worse.
 
 Control budgets, which can be counted on a design before anyone uses it:
 
@@ -229,7 +230,7 @@ This part decides whether a user-visible change passes. Procedure in [references
 
 **Write two files before you report anything**, so the work survives the session:
 
-- `scorecard.json` — the events, the steps, the ratio, the score, the two supporting numbers, and the visible controls and words on each screen of the journey. Use [templates/scorecard.json](templates/scorecard.json). Every event carries `id`, `cause`, `loss` and `fix`; every step that is friction names its event id. Attach the evidence to the events themselves (`screen` or `behaviour`, and where it was seen) rather than leaving it in a report nobody can re-check.
+- `scorecard.json` — the events, the steps, the ratio, the score, the two supporting numbers, and the visible controls and words on each screen of the journey, before and after for any screen the change touched. Use [templates/scorecard.json](templates/scorecard.json). Every event carries `id`, `cause`, `loss` and `fix`; every step that is friction names its event id. Attach the evidence to the events themselves (`screen` or `behaviour`, and where it was seen) rather than leaving it in a report nobody can re-check.
 - A row in `friction-leaderboard.md`, in the product's own repo, one row per journey per build:
 
 ```markdown

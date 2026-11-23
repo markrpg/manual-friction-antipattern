@@ -5,7 +5,7 @@
     "A journey card is written before the UI code, listing the steps only the person can supply and how many steps that comes to.",
     "The action for adding a project appears on the view that lists projects, not only behind Search or in Settings.",
     "A newly added project can be opened and used in the running app with no page reload, no app restart and no 'Refresh to apply' step.",
-    "The provider already signed in is used for the new project with no per-project setup step such as 'Use in this project'.",
+    "A newly added project gets the provider already signed in, so its first task starts through startTask with no per-project provider step and no trip to Settings.",
     "Text typed in the composer is still there after a failure, a decline or a detour.",
     "Errors shown by the flow name their cause and the next action; no generic copy such as 'Something went wrong' or 'Please try again'.",
     "The finished work reports a friction scorecard with the friction ratio, the friction score, each friction event with its loss class and weight, and any budget failures."

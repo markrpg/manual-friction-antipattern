@@ -8,32 +8,33 @@
   body { font: 15px/1.5 -apple-system, system-ui, sans-serif; margin: 0; color: #1c1c1e; background: #f5f5f7; }
   main { max-width: 720px; margin: 0 auto; padding: 28px 20px; }
   h1 { font-size: 22px; margin: 0 0 16px; }
+  h2 { font-size: 15px; margin: 24px 0 8px; }
   ul { list-style: none; padding: 0; margin: 0 0 16px; }
-  li { background: #fff; border: 1px solid #d9d9de; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; }
-  li button { font: inherit; border: 1px solid #c7c7cc; background: #fff; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
-  button { font: inherit; padding: 8px 14px; border: 1px solid #c7c7cc; background: #fff; border-radius: 8px; cursor: pointer; }
-  .row { display: flex; gap: 10px; margin-bottom: 16px; }
-  input { font: inherit; padding: 8px 10px; border: 1px solid #c7c7cc; border-radius: 8px; flex: 1; }
+  li { background: #fff; border: 1px solid #d9d9de; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; gap: 8px; }
+  li.add-row input { flex: 1; font: inherit; padding: 6px 8px; border: 1px solid #c7c7cc; border-radius: 6px; }
+  button { font: inherit; padding: 6px 12px; border: 1px solid #c7c7cc; background: #fff; border-radius: 8px; cursor: pointer; }
   .muted { color: #6b6b70; }
+  .settings { background: #fff; border: 1px solid #d9d9de; border-radius: 10px; padding: 12px 14px; }
 </style>
 </head>
 <body>
 <main>
   <h1>Task board</h1>
-  <div class="row">
-    <input id="new-task" placeholder="Add a task">
-    <button id="add">Add</button>
-    <button id="refresh">Refresh</button>
-  </div>
+  <button id="refresh">Refresh</button>
   <p class="muted">Press Refresh to see changes made in other tabs.</p>
   <ul id="tasks"></ul>
+
+  <h2>Board settings</h2>
+  <div class="settings">
+    <label><input type="checkbox" id="auto-refresh"> Auto-refresh every 30 seconds</label>
+  </div>
 </main>
 
 <script>
-// The board reads the shared task list from the server. It polls nothing and
-// subscribes to nothing: the list is fetched when the page loads and whenever
-// the person presses Refresh.
+// The board reads the shared task list from the server. The list, including
+// the add row at the bottom, is rebuilt from scratch on every load.
 const API = 'https://example.test/api/tasks';
+let timer = null;
 
 async function loadTasks() {
   const res = await fetch(API);
@@ -49,6 +50,23 @@ async function loadTasks() {
     li.appendChild(b);
     ul.appendChild(li);
   }
+  const add = document.createElement('li');
+  add.className = 'add-row';
+  add.innerHTML = '<input id="new-task" placeholder="Add a task"><button id="add">Add</button>';
+  ul.appendChild(add);
+  document.getElementById('add').onclick = addTask;
+}
+
+async function addTask() {
+  const input = document.getElementById('new-task');
+  const title = input.value.trim();
+  if (!title) return;
+  await fetch(API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title })
+  });
+  loadTasks();
 }
 
 async function deleteTask(id) {
@@ -58,17 +76,10 @@ async function deleteTask(id) {
 
 document.getElementById('refresh').onclick = loadTasks;
 
-document.getElementById('add').onclick = async () => {
-  const input = document.getElementById('new-task');
-  const title = input.value.trim();
-  if (!title) return;
-  await fetch(API, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title })
-  });
-  input.value = '';
-  loadTasks();
+// Off by default. When on, the list reloads every 30 seconds.
+document.getElementById('auto-refresh').onchange = (e) => {
+  clearInterval(timer);
+  if (e.target.checked) timer = setInterval(loadTasks, 30000);
 };
 
 loadTasks();

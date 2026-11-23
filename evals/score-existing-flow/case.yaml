@@ -1,9 +1,11 @@
 schema_version: "1.1"
 name: score-existing-flow
 expected_outcome: |
-  The agent produces a scorecard with a friction ratio and friction score, names the
-  friction causes planted in the code as separate events with the loss classes and
-  weights the measure assigns, ranks the fixes by points removed, and reports the
-  journey as broken rather than offering a general list of UI improvements.
+  The agent walks opening a newly added project to a task running and finds the seven
+  planted problems, all reachable on that journey: a restart before the new project opens,
+  a silent detour to Settings, 'Use in this project' asked again for a signed-in account,
+  Check connection needed before that switch appears, a generic error on the first Start,
+  internal IDs in the Running status, and a Refresh needed to see the new task. Assertions
+  01-06 can be met without the skill; 07-09 need its measure (expected total 32, broken).
 context:
   scaffold_script: place-files.sh

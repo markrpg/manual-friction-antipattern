@@ -2,13 +2,14 @@
   "eval_name": "score-existing-flow",
   "prompt": "People tell me using this app is a slog but nobody can say exactly why. Work out where the pain is getting from opening a project to a task running, rank what to fix first, and give me numbers I can keep so I can tell whether a fix helped. Save your work.",
   "assertions": [
-    "A scorecard is produced that records the friction ratio and the friction score for the journey from opening a project to a task running.",
-    "The report names the restart needed before a newly added thing can be used as a Progress loss worth 8 points, and does not merge it with other events.",
-    "The report names the generic error shown when the add fails as a Way forward loss worth 10 points and treats it as the most costly event.",
-    "The report counts the detour from the composer to Settings and the per-project 'Use in this project' step as two separate events, Place (5) and Search (3).",
-    "The report names both the Refresh button as the only way to see current state and the internal attempt, runtime and generation IDs shown on stopping a session as Attention losses worth 2 points each.",
-    "The report gives a total score of 16 or more and calls the journey broken.",
+    "The saved work records numbers for the journey that can be measured again after a fix, including a count of steps taken against the steps the person actually needed.",
+    "The report names the restart needed before the newly added project opens as its own problem.",
+    "The report names the generic 'Something went wrong. Please try again.' error shown when Start fails as its own problem and ranks it among the most costly.",
+    "The report treats the detour from the task composer to Settings and the per-project 'Use in this project' step as two separate problems.",
+    "The report names both the Refresh needed to see the new task and the internal IDs shown in the Running status as problems.",
+    "The report names 'Check connection' having to be pressed before the per-project switch appears as a problem.",
+    "The report gives a single total friction score of 16 or more and calls the journey broken.",
     "The fixes are ordered by how many points they remove, and the report states the points each one covers.",
-    "Every event is weighted with one of the measure's six loss classes at its stated weight: Time 1, Attention 2, Search 3, Place 5, Progress 8, Way forward 10."
+    "The weights match the measure: the restart Progress (8), the generic error Way forward (10), the Settings detour Place (5), 'Use in this project' in Settings Search (3), and Check connection, Refresh and the internal IDs Attention (2) each."
   ]
 }

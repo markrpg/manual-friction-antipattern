@@ -4,4 +4,4 @@ focus: trace
 weight: 1
 ---
 
-The provider already signed in is used for the new project with no per-project setup step such as 'Use in this project'.
+A newly added project gets the provider already signed in, so its first task starts through startTask with no per-project provider step and no trip to Settings.

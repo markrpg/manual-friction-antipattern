@@ -1,8 +1,10 @@
 schema_version: "1.1"
 name: fix-refresh-complaint
 expected_outcome: |
-  The task list updates on its own without the person pressing anything, and the fix
-  does not trade the Refresh button for another control the person has to work, a
-  confirmation, a settings detour or a reload.
+  The task list updates on its own, with nothing for the person to press or switch on.
+  Two traps: the 'Add a task' field sits inside the list, which is rebuilt on every load,
+  so a naive polling fix wipes text being typed; and an Auto-refresh setting already
+  exists, off by default, so flipping it on (or pointing people to it) leaves a switch to
+  find. The fix trades Refresh for no other control, confirmation, settings detour or reload.
 context:
   scaffold_script: place-files.sh

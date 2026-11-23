@@ -28,7 +28,7 @@
     }
   ],
   "screens": [
-    { "name": "Composer", "controls": 4, "words": 18 }
+    { "name": "Composer", "controls_before": 7, "words_before": 46, "controls": 4, "words": 18 }
   ],
   "time_to_first_result_s": null,
   "draft_survival": [

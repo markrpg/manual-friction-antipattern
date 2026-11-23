@@ -5,6 +5,8 @@
     "Tasks added elsewhere appear in the list with the person pressing nothing: no Refresh button, no reload prompt, no manual check.",
     "The fix does not use a page reload, and does not trade the Refresh button for another control the person has to work.",
     "The fix adds no confirmation dialog and sends nobody to a settings page.",
-    "The changed flow adds no step the person has to do that the product had enough information to do itself."
+    "The changed flow adds no step the person has to do that the product had enough information to do itself.",
+    "Text being typed into the 'Add a task' field, and the field's focus, survive an automatic update of the list.",
+    "Updates happen with nothing for the person to switch on: no Auto-refresh setting is left off by default, and none is left for them to find."
   ]
 }

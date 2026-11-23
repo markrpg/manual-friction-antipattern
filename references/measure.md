@@ -151,7 +151,7 @@ Exposed controls and split-up flows are friction too: decisions and stages the p
 
 **Three layers.** Primary holds everyday tasks, the settings that express intent, results and errors with a next action. Advanced holds infrequent configuration, expert settings and detailed status, one disclosure away. Diagnostic holds debug views, test actions, raw payloads, traces and instrumentation, reachable only in a development build or by a support role, with the check made where the action runs. A control hidden by CSS or a client-side flag can still be called.
 
-**Exposure counts.** Record the visible controls and the words on each screen of a journey (`screens` in the scorecard). They catch screens that grow a panel per feature. They are regression signals: a lower count that costs an extra click or an ambiguous control scores worse, and the score decides.
+**Exposure counts.** Record the visible controls and the words on each screen of a journey (`screens` in the scorecard), before and after for any screen a change touches. They catch screens that grow a panel per feature. They are regression signals: a lower count that costs an extra click or an ambiguous control scores worse, and the score decides.
 
 **Implementation-led controls.** The review question for any extra control is what decision it lets the person make. If the answer is only which internal path the app takes, the person is being asked to learn how the app is built, and the app should take the path itself.
 

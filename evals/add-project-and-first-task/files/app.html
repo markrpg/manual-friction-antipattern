@@ -63,7 +63,10 @@
 <script>
 // Qwobolt — an agent workbench. The user is signed in to Claude Code already.
 const state = {
-  projects: [{ name: 'design-notes', tasks: 2 }, { name: 'client-site', tasks: 0 }],
+  projects: [
+    { name: 'design-notes', tasks: 2, provider: 'claude-code' },
+    { name: 'client-site', tasks: 0, provider: 'claude-code' }
+  ],
   provider: { name: 'Claude Code', signedIn: true },
   current: null,
   view: 'all'
@@ -117,8 +120,23 @@ document.getElementById('start').onclick = () => {
   const text = document.getElementById('task').value.trim();
   const msg = document.getElementById('composer-msg');
   if (!text) { msg.textContent = 'Write a task first.'; return; }
-  msg.textContent = 'Starting ' + state.current.name + '…';
+  try {
+    const run = startTask(state.current, text);
+    msg.textContent = 'Running with ' + run.provider;
+    state.current.tasks += 1;
+  } catch (e) {
+    msg.textContent = e.message;
+  }
 };
+
+// Stands in for the agent backend. Each project names the provider its tasks
+// run on; a project without one cannot start a task.
+function startTask(project, text) {
+  if (!project.provider) {
+    throw new Error('No provider is set for this project. Choose one in Settings.');
+  }
+  return { project: project.name, provider: project.provider, text };
+}
 
 render();
 </script>

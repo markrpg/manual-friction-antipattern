@@ -1,0 +1,11 @@
+{
+  "eval_name": "add-model-switch",
+  "prompt": "We're adding Claude Sonnet as a second model. Make it possible to switch between GPT-6 and Claude Sonnet on the settings screen. Copy app.html into your output folder and work there. Save every file you touch.",
+  "assertions": [
+    "Choosing a model takes effect when it is chosen, with no separate Apply, Save or confirm step.",
+    "The change adds no button whose label has three or more words and no paragraph that restates the heading or the visible status.",
+    "The current model and connection state show on their own after a switch, with no Refresh or Test step needed to see them.",
+    "The developer tooling on the screen (Show Runtime Diagnostics, Test Provider Connection, the IDLE_READY status text and the debug panel hidden only with CSS) is removed from the everyday view or moved behind a real check, or the agent's report names each one that remains as a problem.",
+    "The saved files or the final reply record the visible controls and words on the settings screen before and after the change."
+  ]
+}

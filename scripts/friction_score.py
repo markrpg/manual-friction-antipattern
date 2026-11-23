@@ -89,7 +89,7 @@ def score_card(card):
 
     screens = card.get("screens")
     for sc in screens or []:
-        for key in ("controls", "words"):
+        for key in ("controls", "words", "controls_before", "words_before"):
             if key in sc and (not isinstance(sc[key], int) or sc[key] < 0):
                 fail(f"screen {sc.get('name', '?')}: {key} must be a whole number")
 
@@ -144,9 +144,16 @@ def markdown(r):
     out.append(f"| | **Total** | | **{r['score']}** | |")
     out.append("")
     if r["screens"]:
+        def cell(sc, key):
+            after, before = sc.get(key), sc.get(key + "_before")
+            if after is None:
+                return "—"
+            if before is None:
+                return str(after)
+            return f"{before} → {after} ({after - before:+d})"
         out += ["| Screen | Visible controls | Words |", "|---|---|---|"]
         for sc in r["screens"]:
-            out.append(f"| {sc.get('name', '')} | {sc.get('controls', '—')} | {sc.get('words', '—')} |")
+            out.append(f"| {sc.get('name', '')} | {cell(sc, 'controls')} | {cell(sc, 'words')} |")
         out.append("")
     if r["pass"]:
         out.append("**Within budget.**" if r["main_journey"] else "**No way_forward or progress events.**")

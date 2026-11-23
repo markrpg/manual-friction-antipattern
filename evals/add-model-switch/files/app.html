@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qwobolt — Settings</title>
+<style>
+  body { font: 15px/1.5 -apple-system, system-ui, sans-serif; margin: 0; color: #1c1c1e; background: #f5f5f7; }
+  main { max-width: 760px; margin: 0 auto; padding: 28px 20px; }
+  h1 { font-size: 22px; margin: 0 0 16px; }
+  h2 { font-size: 17px; margin: 0 0 6px; }
+  .card { background: #fff; border: 1px solid #d9d9de; border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+  .muted { color: #6b6b70; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  button { font: inherit; padding: 7px 12px; border: 1px solid #c7c7cc; background: #fff; border-radius: 8px; cursor: pointer; }
+  pre { background: #f0f0f3; padding: 10px; border-radius: 8px; overflow: auto; font-size: 12px; }
+  .debug { display: none; }
+  body.debug-on .debug { display: block; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Settings</h1>
+
+  <section class="card" id="model-card">
+    <h2>AI Model Configuration and Runtime Management</h2>
+    <p class="muted">Configure your active AI provider, manage connection parameters, inspect current operational status and execute model verification operations.</p>
+    <p><strong>Currently Selected AI Model Provider:</strong> <span id="current">OpenAI — GPT-6 — Connected and Operational</span></p>
+    <div class="row">
+      <button id="apply">Apply Model Configuration</button>
+      <button id="test">Test Provider Connection</button>
+      <button id="diag">Show Runtime Diagnostics</button>
+      <button id="refresh">Refresh Provider Status</button>
+    </div>
+    <p class="muted" id="status-line">Last configuration validation completed successfully. Runtime status: IDLE_READY.</p>
+  </section>
+
+  <section class="card">
+    <h2>Theme</h2>
+    <div class="row">
+      <button>Light</button><button>Dark</button><button>Match system</button>
+    </div>
+  </section>
+
+  <section class="card debug" id="debug-panel">
+    <h2>Developer diagnostics</h2>
+    <div class="row">
+      <button id="reset-provider">Reset provider state</button>
+      <button id="dump">Dump runtime JSON</button>
+    </div>
+    <pre id="raw"></pre>
+  </section>
+</main>
+
+<script>
+// Settings for Qwobolt. One model is available today: GPT-6 through OpenAI.
+const state = {
+  provider: { id: 'prov_openai_01', name: 'OpenAI', connected: true },
+  model: 'GPT-6',
+  pendingModel: 'GPT-6',
+  runtime: { status: 'IDLE_READY', attempt: 'att_7731', generation: 'gen_0042' }
+};
+
+// The debug panel is shown when the URL has ?debug=1.
+if (new URLSearchParams(location.search).get('debug') === '1') {
+  document.body.classList.add('debug-on');
+}
+
+function renderCurrent() {
+  document.getElementById('current').textContent =
+    state.provider.name + ' — ' + state.model + ' — ' +
+    (state.provider.connected ? 'Connected and Operational' : 'Disconnected');
+}
+
+document.getElementById('apply').onclick = () => {
+  state.model = state.pendingModel;
+  renderCurrent();
+  document.getElementById('status-line').textContent =
+    'Last configuration validation completed successfully. Runtime status: ' + state.runtime.status + '.';
+};
+
+document.getElementById('test').onclick = () => {
+  document.getElementById('status-line').textContent = 'Provider connection test passed (' + state.provider.id + ').';
+};
+
+document.getElementById('diag').onclick = () => {
+  document.getElementById('status-line').textContent = JSON.stringify(state.runtime);
+};
+
+document.getElementById('refresh').onclick = renderCurrent;
+
+// Developer actions. These are only on screen in debug mode, but the handlers
+// are always attached.
+function resetProviderState() {
+  state.provider.connected = false;
+  state.runtime.status = 'RESET';
+  renderCurrent();
+}
+document.getElementById('reset-provider').onclick = resetProviderState;
+document.getElementById('dump').onclick = () => {
+  document.getElementById('raw').textContent = JSON.stringify(state, null, 2);
+};
+
+renderCurrent();
+</script>
+</body>
+</html>
