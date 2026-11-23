@@ -10,13 +10,11 @@ The skill works in five parts:
 
 1. **Journey first.** Write the person's path and the steps only they can supply (intent, a real choice, an approval, a secret, a physical action) before any screen is built.
 2. **Defaults and disclosure.** Every decision the product can infer becomes a default; settings show intent-level controls only; missing setup opens inside the flow.
-3. **Banned patterns.** Fourteen screen and code patterns the agent refuses, from restart-to-apply to buttons that exist only because of how the app stores the work, with a ripgrep scan for diffs.
+3. **Banned patterns.** Seventeen screen and code patterns the agent refuses, from restart-to-apply to debug tools left in production screens, with a ripgrep scan for diffs.
 4. **Scoring review.** Weight each friction event by what it costs the person, from Time (1) to Way forward (10).
 5. **Installed-app walk.** Score the journey in the running app. This decides whether a change passes: in the calibration run, 28 of 33 points only showed up there.
 
 A main journey passes with a friction ratio of 1.5 or less, a score of 5 or less, and no events that lose the person's work or leave them stuck.
-
-## Install
 
 ## Install
 

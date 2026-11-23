@@ -68,6 +68,8 @@ def score_card(card):
     failures = []
     for e in events:
         label = f"{e.get('id', '?')} ({e.get('cause', e['loss'])})"
+        if e.get("ungated_diagnostic"):
+            failures.append(f"developer or test tooling a production user can reach: {label}")
         if e["loss"] in ("way_forward", "progress"):
             failures.append(f"{e['loss']} event: {label}")
         elif main and e["loss"] == "search" and e.get("main_action"):
@@ -85,6 +87,12 @@ def score_card(card):
     if len(lost) > progress_events:
         warnings.append(f"{len(lost)} lost drafts but {progress_events} progress events; each lost draft is a progress event")
 
+    screens = card.get("screens")
+    for sc in screens or []:
+        for key in ("controls", "words"):
+            if key in sc and (not isinstance(sc[key], int) or sc[key] < 0):
+                fail(f"screen {sc.get('name', '?')}: {key} must be a whole number")
+
     by_class = {k: sum(weights[k] for e in events if e["loss"] == k) for k in LOSSES}
     return {
         "journey": card.get("journey"),
@@ -101,6 +109,7 @@ def score_card(card):
         "events": [{**e, "weight": weights[e["loss"]]} for e in events],
         "time_to_first_result_s": card.get("time_to_first_result_s"),
         "draft_survival": survival,
+        "screens": screens,
         "pass": not failures,
         "failures": failures,
         "warnings": warnings,
@@ -134,6 +143,11 @@ def markdown(r):
         out.append(f"| {e.get('id', '')} | {e.get('cause', '')} | {e['loss']} | {e['weight']} | {e.get('fix', '')} |")
     out.append(f"| | **Total** | | **{r['score']}** | |")
     out.append("")
+    if r["screens"]:
+        out += ["| Screen | Visible controls | Words |", "|---|---|---|"]
+        for sc in r["screens"]:
+            out.append(f"| {sc.get('name', '')} | {sc.get('controls', '—')} | {sc.get('words', '—')} |")
+        out.append("")
     if r["pass"]:
         out.append("**Within budget.**" if r["main_journey"] else "**No way_forward or progress events.**")
     else:

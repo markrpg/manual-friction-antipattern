@@ -5,8 +5,10 @@ description: >
   already had enough information to do itself. Catches signed-in accounts set
   up again per project, restart-to-apply, detours to Settings, generic errors,
   greyed-out or dead buttons, one-option pickers, confirmations on undoable
-  actions, Refresh buttons, internal IDs in UI text, lost drafts, and buttons
-  that exist only because of how the app stores the work. Use before designing
+  actions, Refresh buttons, internal IDs in UI text, lost drafts, buttons
+  that exist only because of how the app stores the work, wordy labels,
+  every feature exposed at once, and debug tools left in production. Use
+  before designing
   or building any user-facing flow, screen, onboarding, settings page, form,
   error state or approval prompt; when reviewing a design, screenshot or UI
   diff; and when verifying a UI change in the running app. Also use when
@@ -124,6 +126,43 @@ For every button, link or screen you add, ask: **what decision does this let the
 
 Example: a person comes back to Qwobolt's Hub to keep writing. The app had stored their work as a prepared task, so it offered *Review saved conversation*, with the conversation already on screen. The fix restores the text and choices into the chat box. They edit and press Continue, and any review the work requires appears before an agent starts.
 
+### Show what the task needs
+
+Agents build screens that mirror the implementation. Every capability they wrote gets a visible control, and every concept they handled (provider IDs, retries, runtime states, test endpoints) reaches the screen. Each addition looks thorough; together they make a screen the person has to read before they can use it. Three faults, each counted:
+
+| Fault | What the agent produces | What to build | Counted as |
+|---|---|---|---|
+| Wordiness | Long headings, sentence-length button labels, helper text that restates the heading, status repeated in prose | Short familiar labels, a verb and a noun for an action; a line of help only when it carries a source, a count, a time, a cause, a consequence or the next action | Attention (2) per screen that has to be read before acting |
+| Exposure | A button, toggle or panel for every capability, all at the same weight | The common task up front; infrequent and expert controls one disclosure away, beside the work they change | Attention (2) per infrequent control on a main journey screen |
+| Leakage | Debug panels, test buttons, raw JSON, state names like `IDLE_READY`, diagnostics on everyday screens | Developer tools in a diagnostic layer that production users never reach | Attention (2) each; reachable without an environment or permission check, the change fails |
+
+Behind all three sits a habit of proving that something was implemented. For each element, ask what the person loses if it goes. If the only loss is evidence that a feature exists, it goes.
+
+The agent's version of a model picker:
+
+> **AI Model Configuration and Runtime Management**
+> Configure your active AI provider, manage connection parameters, inspect current operational status and execute model verification operations.
+> Currently Selected AI Model Provider: OpenAI — GPT-6 — Connected and Operational
+> [Apply Model Configuration] [Test Provider Connection] [Show Runtime Diagnostics] [Refresh Provider Status]
+> Last configuration validation completed successfully. Runtime status: IDLE_READY.
+
+The task's version:
+
+> **Model** · GPT-6 · [Change]
+> Connected
+
+Every capability survives. A change applies when it's made, the connection is checked on its own (live state), and diagnostics sit in the diagnostic layer.
+
+**Three layers.**
+
+- *Primary*: everyday tasks, the settings that express intent, results, errors with a next action.
+- *Advanced*: infrequent configuration, expert settings, detailed status, one disclosure away from the task it changes.
+- *Diagnostic*: debug views, test actions, raw payloads, traces and instrumentation. Reachable only in a development build or by a signed-in support role, checked where the action runs (the server or the main process). A control hidden with CSS or a client-side flag can still be called, so leakage is a security defect as well as clutter.
+
+**Simplify by the score.** A shorter screen helps only when the journey gets cheaper. Removing the label that explains an unfamiliar control adds an Attention event; hiding state the person needs before they trust the result adds one; trading a visible button for an extra click raises the ratio. Rescore and keep whichever version scores lower.
+
+**Reassess after every feature.** A session that adds a feature tends to append its controls and leave the rest of the screen alone, so a clean screen degrades release by release. After adding anything visible, review the whole screen it lands on: which layer the new control belongs in, whether an existing control now duplicates it, whether the primary action still stands out. Record visible controls and words for each screen in the scorecard (`screens`). A rise in either with no drop in the score is a regression to look at; the counts are signals, and a lower count with a higher score is worse.
+
 Control budgets, which can be counted on a design before anyone uses it:
 
 | Count | Budget | Each one over |
@@ -134,10 +173,12 @@ Control budgets, which can be counted on a design before anyone uses it:
 | Stages between intent and result | One per necessary step | Time (1); Place (5) if it leaves the current view |
 | Confirmations on undoable actions | 0 | Time (1) each |
 | Controls whose only decision is an internal path (saved copy, prepared task, stored draft, staging step) | 0 | Attention (2) each; Place (5) if it opens another view |
+| Infrequent or expert controls on a main journey screen | 0; one disclosure away | Attention (2) each |
+| Developer or test tooling reachable by a production user | 0 | Attention (2) each; fails the change when nothing checks the environment or permission where the action runs |
 
 An approval is necessary only when all of these hold: it's asked once inside its reach; it's asked where the risk is, inside the flow that needs it; it says what it allows, for how long and what happens if declined; the draft is kept whichever way the person answers; declining leaves a way forward. Each failure scores; see [references/measure.md](references/measure.md#when-approval-is-friction).
 
-The agent build habits that produce friction, each with its replacement, are in [references/patterns.md](references/patterns.md#build-habits). Read that table before building a new flow. The habits feel like good engineering from inside one feature: a control for every setting, a button for every internal state, a new screen per stage, a confirmation "to be safe", the new action placed next to the code that runs it, a safety check repeated at every level, "restart to apply" because live loading is harder, tests on fixtures as the proof.
+The agent build habits that produce friction, each with its replacement, are in [references/patterns.md](references/patterns.md#build-habits). Read that table before building a new flow. The habits feel like good engineering from inside one feature: a control for every setting, a button for every internal state, a sentence to explain each control, a debug panel left in, a new screen per stage, a confirmation "to be safe", the new action placed next to the code that runs it, a safety check repeated at every level, "restart to apply" because live loading is harder, tests on fixtures as the proof.
 
 ## Part 3: Banned patterns
 
@@ -157,6 +198,9 @@ Refuse these in any design or code you produce, and flag them in anything you re
 12. A form that asks for something the product already knows, or asks for it before it's needed.
 13. Feedback the person has to scroll to see.
 14. A button, screen or flow that exists only because of how the app stores or runs the work ("Review saved conversation", "Resume prepared task", "Open draft"), when the work could be restored where the person already is.
+15. Copy that restates what the screen already shows, or a button label that reads as a sentence.
+16. Developer or test tooling in a production flow (debug panels, test buttons, raw payloads, internal state names), or tooling hidden only by CSS or a client-side flag.
+17. Infrequent or expert controls at the same weight as the screen's primary action.
 
 On a code diff, run the static scan in [references/patterns.md](references/patterns.md#static-scan). Its hits are leads; confirm each by reading the code.
 
@@ -168,6 +212,8 @@ For a design, mock, screenshot or diff:
 2. Walk the planned path through the design on paper, as the newcomer. Include the likely wrong turns: where would a newcomer look first for the main action?
 3. Classify every friction event with the table below, plus the control budgets above.
 4. Write the events to a scorecard and run the scorer. The scorecard is the deliverable, not the report.
+
+Where you can, have the review done by an agent that didn't build the change, given only the screen and the journey card. The builder knows the implementation, and that knowledge is what leaks onto the screen; a reviewer without it reads the screen the way a newcomer does.
 
 A design that passes review can still score in the broken band once used. Review catches the screen-visible kinds early and cheaply; it passes nothing on its own.
 
@@ -183,7 +229,7 @@ This part decides whether a user-visible change passes. Procedure in [references
 
 **Write two files before you report anything**, so the work survives the session:
 
-- `scorecard.json` — the events, the steps, the ratio, the score, the two supporting numbers. Use [templates/scorecard.json](templates/scorecard.json). Every event carries `id`, `cause`, `loss` and `fix`; every step that is friction names its event id. Attach the evidence to the events themselves (`screen` or `behaviour`, and where it was seen) rather than leaving it in a report nobody can re-check.
+- `scorecard.json` — the events, the steps, the ratio, the score, the two supporting numbers, and the visible controls and words on each screen of the journey. Use [templates/scorecard.json](templates/scorecard.json). Every event carries `id`, `cause`, `loss` and `fix`; every step that is friction names its event id. Attach the evidence to the events themselves (`screen` or `behaviour`, and where it was seen) rather than leaving it in a report nobody can re-check.
 - A row in `friction-leaderboard.md`, in the product's own repo, one row per journey per build:
 
 ```markdown
@@ -213,7 +259,7 @@ If the walk can't run (no build, no access, the tool was denied), the friction c
 
 - **Friction ratio** = steps taken ÷ necessary steps. 1.0 means the person did only what only they could do.
 - **Friction score** = sum of event weights. Bands: 0–5 normal, 6–15 noticeable (people learn workarounds and pass them on), 16+ broken (people need help, or stop).
-- **Budget for a main journey:** no `way_forward` or `progress` events; no `search` event for the journey's main action; `place` events only where an approval is needed and the person returns to the same draft; ratio ≤ 1.5; score ≤ 5. Any `way_forward` or `progress` event fails the journey whatever the total.
+- **Budget for a main journey:** no `way_forward` or `progress` events; no `search` event for the journey's main action; `place` events only where an approval is needed and the person returns to the same draft; ratio ≤ 1.5; score ≤ 5. Any `way_forward` or `progress` event fails the journey whatever the total, and so does any event marked `"ungated_diagnostic": true` (developer or test tooling a production user can reach and call).
 - **Supporting numbers:** time to first result (seconds from launch), and draft survival (kept/lost per interruption; each loss is a `progress` event).
 
 Run the scorer (Python 3, no dependencies; the path is relative to this skill's folder):
@@ -235,7 +281,7 @@ Fix the heaviest events first. Standard fixes by class:
 | `progress` | Load live, without a restart; persist drafts per context; keep scroll and selection across navigation; if a restart is unavoidable, Restart now plus full state restore |
 | `place` | Bring the missing setup into the flow as an inline sheet; return to the same draft |
 | `search` | Put the add/open action on the view that lists the items; make the main action visible; reuse completed setup inside its reach |
-| `attention` | Live state instead of Refresh; plain words instead of IDs; platform shortcuts |
+| `attention` | Live state instead of Refresh; plain words instead of IDs; platform shortcuts; short labels; infrequent controls one disclosure away; developer tooling moved to the diagnostic layer behind a real check |
 | `time` | Defaults; auto-pick a single option; Undo instead of confirm |
 
 Rescore from the same starting state after the fixes. Report how many points each fix removed.

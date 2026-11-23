@@ -23,8 +23,12 @@
       "main_action": false,
       "approval_needed": false,
       "draft_kept": true,
+      "ungated_diagnostic": false,
       "fix": "What removes it"
     }
+  ],
+  "screens": [
+    { "name": "Composer", "controls": 4, "words": 18 }
   ],
   "time_to_first_result_s": null,
   "draft_survival": [

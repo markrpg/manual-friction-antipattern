@@ -15,6 +15,11 @@ The way agents build adds more. Each habit below looks sound inside one feature.
 | New actions go beside the code that runs them | Search | Open folder sits on a Projects page the grid never links to | Put the action on the view that lists the items, and wherever the person would look first |
 | Safety checks copied to every level | Search, Time | Provider sign-in repeated for each project | Store each approval at its reach; ask again only when the reach changes |
 | Every internal state or operation gets its own button, screen or flow | Attention, Place | The Hub offers Review saved conversation for a conversation already on screen, because the work was stored as a prepared task | Restore the work where the person goes next; add a control only for a genuinely different choice |
+| Every implemented feature gets a visible control, to show it was built | Attention | Model card with Apply, Test connection, Show diagnostics and Refresh side by side | The common task up front; the rest one disclosure away; checks run on their own |
+| Implementation vocabulary reaches the screen | Attention | Runtime status `IDLE_READY` under the model picker | The person's words; internals behind Details or in the diagnostic layer |
+| Explaining each control in a sentence to look clear | Attention | A heading followed by a paragraph that restates it | Short labels; help only when it carries a source, count, time, cause, consequence or next action |
+| Debug and test tooling left in, or hidden with CSS | Attention, plus a security defect | Test provider connection and raw JSON on the settings screen | A diagnostic layer reachable only in a development build or by a support role, checked where the action runs |
+| Each session appends its controls and leaves the screen as it was | Attention, Search | A screen that grows one panel per feature | After adding anything visible, review the whole screen; track controls and words per screen |
 | Internal state shown as it is | Attention | Stop session lists attempt, runtime and generation IDs | Lead with what the person recognises (task name, folder); IDs behind Details |
 | Error codes added without messages | Way forward | `working_copy_overlaps` becomes provider troubleshooting | Add the message, cause and next action in the same change as the code |
 | Waiting on the app's state handed to the person | Attention | Models appear only after Check connection | Run the check on open and on change; show progress while it runs |
@@ -43,6 +48,9 @@ The way agents build adds more. Each habit below looks sound inside one feature.
 | 15 | Confirmation the person has to scroll to see | Attention (2) | Screen + behaviour | Scan 14; check the viewport after each action at the default scroll position |
 | 16 | Manual retry ("Try again") where the product could retry itself | Attention (2) | Screen + behaviour | Scan 1; a retry the product runs alone is not a control |
 | 17 | Control whose only decision is an internal path (Review saved…, Resume prepared…, Open draft…) | Attention (2); Place (5) if it opens another view | Screen | Scan 15; for each control ask what decision it lets the person make |
+| 18 | Copy that restates what the screen shows; button labels that read as sentences | Attention (2) per screen | Screen | Scan 18; read each line of help and ask what it tells someone already looking at the screen |
+| 19 | Developer or test tooling in a production flow, or hidden only by CSS or a client-side flag | Attention (2) each; ungated, the change fails | Screen + code | Scans 16 and 17; for each hit, find the check where the action runs |
+| 20 | Infrequent or expert controls at the same weight as the primary action | Attention (2) each | Screen | Count the controls visible by default on each main journey screen; ask how often each is used |
 
 ## Static scan
 
@@ -103,7 +111,21 @@ rg -n "placeholder=|<label|name=\"[a-z_]+\"" -g '*.{tsx,jsx,html,vue,svelte,swif
 rg -n -i "['\">](review|resume|open|restore|load|view|continue) (the )?(saved|prepared|pending|stored|staged|cached|queued|draft)|prepared task|saved (conversation|session|state)|staging"
 # for each hit ask: what decision does this let the person make? Only which
 # internal path to take → restore the work where they already are and remove it.
+
+# 16. Developer and test tooling in UI code (Attention; ungated fails the change)
+rg -n -i "debug|diagnostic|devtools|dev tools|test (connection|provider|endpoint|mode)|raw (json|payload|response)|JSON\.stringify\([^)]*,\s*null,\s*2\)|<pre[ >]" -g '*.{tsx,jsx,vue,svelte,html,swift,kt}'
+
+# 17. How that tooling is hidden: a client-side check alone leaves the action callable
+rg -n "NODE_ENV|import\.meta\.env\.DEV|isDev|__DEV__|DEBUG|display:\s*none|hidden=\{" -g '*.{tsx,jsx,vue,svelte,ts,js}'
+# for every scan 16 hit, find the environment or permission check where the
+# action itself runs (server route, IPC handler, main process). None → fail.
+
+# 18. Wordiness: button labels of three words or more, and state constants shown as text
+rg -o -N --no-filename "<button[^>]*>[^<{]+</button>" -g '*.{tsx,jsx,vue,svelte,html}' | sed 's/<[^>]*>//g' | awk 'NF>=3'
+rg -n "['\"][A-Z]{2,}(_[A-Z]{2,})+['\"]" -g '*.{tsx,jsx,vue,svelte,html,swift,kt}'
 ```
+
+For 18, also read every paragraph under a heading on a main journey screen. Keep it only if it carries a source, a count, a time, a cause, a consequence or the next action.
 
 **Two writers.** A setting is usually written in more than one place: the screen, the handler that applies it, and sometimes a config, a default or a per-item copy. Most "the button does nothing" bugs are these two disagreeing. For every control you touch, trace once from the control to the state the flow actually reads, and confirm the scan 8 hit (a no-op handler) is gone from that path. Where the product keeps per-item copies of a setting, prefer the account-level or project-level value with the per-item one as an override.
 

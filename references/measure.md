@@ -145,6 +145,14 @@ Exposed controls and split-up flows are friction too: decisions and stages the p
 | Confirmations on actions that can be undone | 0: act, show what happened, offer Undo | Time (1) each |
 | Controls whose only decision is an internal path: a separate button, screen or flow for a saved copy, a prepared task, a stored draft or a staging step | 0: restore the work where the person goes next | Attention (2) each; Place (5) if it opens another view |
 
+| Infrequent or expert controls on a main journey screen | 0: one disclosure away, beside the work they change | Attention (2) each |
+| Screens whose copy has to be read before acting: headings restated in prose, sentence-length labels, status repeated | 0 | Attention (2) per screen |
+| Developer or test tooling a production user can reach | 0: a diagnostic layer checked where the action runs | Attention (2) each; with no environment or permission check the change fails (`"ungated_diagnostic": true`) |
+
+**Three layers.** Primary holds everyday tasks, the settings that express intent, results and errors with a next action. Advanced holds infrequent configuration, expert settings and detailed status, one disclosure away. Diagnostic holds debug views, test actions, raw payloads, traces and instrumentation, reachable only in a development build or by a support role, with the check made where the action runs. A control hidden by CSS or a client-side flag can still be called.
+
+**Exposure counts.** Record the visible controls and the words on each screen of a journey (`screens` in the scorecard). They catch screens that grow a panel per feature. They are regression signals: a lower count that costs an extra click or an ambiguous control scores worse, and the score decides.
+
 **Implementation-led controls.** The review question for any extra control is what decision it lets the person make. If the answer is only which internal path the app takes, the person is being asked to learn how the app is built, and the app should take the path itself.
 
 **Ask or act.** The product asks before acting only when it is unsure of the person's intent or the stakes are high. Otherwise it acts, shows what it did, and offers Undo. Actions appear beside the work they apply to, and detail stays behind a disclosure until someone opens it.
@@ -185,3 +193,4 @@ Of the 33 points in the small-repo run, 5 were visible on a screen. The other 28
 - Step counts depend on how finely steps are cut. Keep one way of cutting across a project so scores compare.
 - A newcomer and a regular meet different friction. This measure scores the newcomer.
 - Necessary approvals still cost time. They stay out of the score because removing them would remove a protection.
+- A sparse screen can be worse. Labels that explain unfamiliar controls, state the person needs before trusting a result, and the density an expert relies on all earn their place. Cut them only when the rescore goes down.
