@@ -8,7 +8,7 @@ Manual friction is work a person does that the product already had enough inform
 
 The skill works in five parts:
 
-1. **Journey first.** Write the person's path and the steps only they can supply (intent, a real choice, an approval, a secret, a physical action) before any screen is built.
+1. **Journey first.** Write the person's path and the steps only they can supply (intent, a real choice, an approval, a secret, a physical action) before any screen is built. For changes across screens, check where the action belongs and what context must survive the handoff.
 2. **Defaults and disclosure.** Every decision the product can infer becomes a default; settings show intent-level controls only; missing setup opens inside the flow.
 3. **Banned patterns.** Seventeen screen and code patterns the agent refuses, from restart-to-apply to debug tools left in production screens, with a ripgrep scan for diffs.
 4. **Scoring review.** Weight each friction event by what it costs the person, from Time (1) to Way forward (10).
@@ -58,6 +58,7 @@ To block a release that adds friction, run it in your automated build checks: it
 |---|---|
 | [SKILL.md](SKILL.md) | What the agent follows |
 | [references/measure.md](references/measure.md) | Definitions, reach of approvals, counting rules, weights, budgets |
+| [references/ux-coherence.md](references/ux-coherence.md) | Placement, shared navigation conventions and cross-screen journeys |
 | [references/patterns.md](references/patterns.md) | Build habits with replacements, banned patterns, static scan |
 | [examples/small-repo.md](examples/small-repo.md) | The scored calibration run (33 points, broken band) |
 | [templates/](templates) | Journey card and scorecard |

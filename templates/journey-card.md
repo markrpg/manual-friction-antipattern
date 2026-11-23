@@ -22,6 +22,14 @@
 |---|---|---|
 | | | |
 
+## Placement and handoffs (if routes, ownership or transitions change)
+
+**Owner:** <existing area and source of state; if adding a destination, the distinct task it serves>
+
+| Step ID | Entry and starting context | Action and destination | Success and next action | Back, Cancel or failure | State kept; source of truth |
+|---|---|---|---|---|---|
+| | | | | | |
+
 ## Target
 
 Ratio ≤ 1.5 · score ≤ 5 · no Way forward or Progress events · no Search on the main action · Place only for an approval, returning to the same draft.

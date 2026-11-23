@@ -62,6 +62,8 @@ Yes to both: necessary. Anything else: friction.
 
 **Event.** One piece of friction with one cause. Two events are counted separately when they could be fixed separately. Going to Settings (a detour) and pressing "Use in this project" (asked again) are two events: putting the button in the composer removes the detour and keeps the second request, while reusing the signed-in provider removes both.
 
+**Handoffs.** A deliberate visit to manage providers and a trip to Settings forced by the composer have different starting intent. Score each path on its own. Count the observed loss: Search for an obscured action, Place for a forced detour, Progress for work that must be rebuilt, Way forward for a dead end. Several routes can serve one task without friction; several screens can also share one cause. Group by cause as above.
+
 ## Friction ratio
 
 ```

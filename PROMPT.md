@@ -10,6 +10,8 @@ follow it:
 
 1. Before designing or building, write the journey card: the result, a
    newcomer's starting state, and the steps only the person can supply.
+   For cross-screen changes, check the existing action owner, how people
+   find it from each entry, and where they return with their work intact.
 2. While building, turn every decision the product can infer into a default,
    and refuse the banned patterns.
 3. Before calling the change done, walk the journey in the running app as a

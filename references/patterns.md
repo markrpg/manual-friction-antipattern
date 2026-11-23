@@ -10,6 +10,7 @@ The way agents build adds more. Each habit below looks sound inside one feature.
 |---|---|---|---|
 | A control for every setting, all visible | Time, Attention | Project checks: pick a candidate and save, even when only one was found | Apply the single or best candidate; show it as a fact with Change beside it |
 | Work split into separate screens and stages | Place, Time | Provider set up in Settings, away from the composer that needs it | One stage per necessary step; missing setup opens inline in the flow |
+| A page added for each subsystem | Search, Place, Progress | Provider setup split across keys, connection testing and model settings | Give provider management one owner; reuse the connection action from the composer and verify the return with the draft intact |
 | Confirmation before low-risk actions | Time | Continue draft asks for a second confirmation | Act, show what happened, offer Undo |
 | Each feature built and tested alone; nobody walks the whole path | Progress, Way forward | Adding a project worked; opening it in the running app did not | Walk the journey end to end in the installed app before calling it done |
 | New actions go beside the code that runs them | Search | Open folder sits on a Projects page the grid never links to | Put the action on the view that lists the items, and wherever the person would look first |

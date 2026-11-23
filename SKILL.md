@@ -4,10 +4,10 @@ description: >
   Prevents and measures manual friction: work a person does that the product
   already had enough information to do itself. Catches accounts set up again
   per project, restart-to-apply, detours to Settings, generic errors, dead or
-  unexplained disabled buttons, one-option pickers, confirms on undoable
-  actions, Refresh buttons, internal IDs, lost drafts, controls that mirror
-  how the app stores work, wordy labels, every feature exposed at once, and
-  debug tools left in production. Use before building or changing any
+  unexplained disabled buttons, one-option pickers, redundant confirms,
+  Refresh buttons, internal IDs, lost drafts, implementation-led controls,
+  wordy labels, overexposed features, production debug tools, and fragmented
+  navigation or disconnected journeys. Use before building or changing any
   user-facing screen or flow, including small fixes and adding an option,
   setting or model, plus onboarding, forms, errors and approval prompts; when
   reviewing a design, screenshot or UI diff; and when verifying a UI change
@@ -75,11 +75,17 @@ Before any screen, component or endpoint, write the journey card. Copy [template
 - **Approvals**: each with its reach and when it must be asked again.
 - **Target**: friction ratio ≤ 1.5, score ≤ 5, no Way forward or Progress events.
 
+### Place the change in the app
+
+For changes that affect routes, feature ownership or handoffs, read the product's UX notes if they exist. Check them against the routes and related screens in use. Record in the card where people start, which existing area owns the capability, where each path leads, and what must carry across. Review the screens together before designing any one of them. Give changed handoffs step IDs so reviewers and planners can refer to the same place.
+
+Extend an existing view or open the shared action in context when it fits. A new destination needs a distinct user goal, a discoverable entry, and an exit that leaves the person ready for what they came to do. Use the app's existing navigation and interaction conventions. Different entry points can use the same action and state; keep useful shortcuts, direct links and standalone management. See [references/ux-coherence.md](references/ux-coherence.md) for the shared UX contract and a worked example.
+
 Then **score the plan before you build it**: walk the design you intend on paper, count the stages between intent and result, the controls the person has to work and the decisions the screen shows, and record that as the planned score in the card. A plan that is already over budget is over budget before anyone writes a line.
 
 Then plan the build against the card. Any step the plan needs that isn't on the card is friction you are about to build. Remove it, turn it into a default, or show which of the five kinds it belongs to.
 
-If the product's main journeys aren't written down yet, write them first. Most products have three to five: first launch to first result, resume after a restart, finish or apply the result, connect a second account/provider/device and use it where things already exist.
+When defining a product area or reviewing the app as a whole, write down the critical journeys that aren't documented yet. Start with first launch to first result, resuming work, applying a result, or connecting another account and using it in an existing project.
 
 ## Part 2: Defaults and disclosure
 
@@ -210,11 +216,11 @@ On a code diff, run the static scan in [references/patterns.md](references/patte
 For a design, mock, screenshot or diff:
 
 1. Take the journey card (write it if missing).
-2. Walk the planned path through the design on paper, as the newcomer. Include the likely wrong turns: where would a newcomer look first for the main action?
+2. Walk the planned path through the related screens, as the newcomer. Check who owns the action, where someone would look first, and where each handoff leaves them.
 3. Classify every friction event with the table below, plus the control budgets above.
 4. Write the events to a scorecard and run the scorer. The scorecard is the deliverable, not the report.
 
-Where you can, have the review done by an agent that didn't build the change, given only the screen and the journey card. The builder knows the implementation, and that knowledge is what leaks onto the screen; a reviewer without it reads the screen the way a newcomer does.
+Where you can, have the review done by an agent that didn't build the change, given the journey card and the screens involved, without coaching on where to click. Ask the reviewer to find the action and follow it through to the result.
 
 A design that passes review can still score in the broken band once used. Review catches the screen-visible kinds early and cheaply; it passes nothing on its own.
 
@@ -225,7 +231,7 @@ This part decides whether a user-visible change passes. Procedure in [references
 1. Build and install, or launch, the app as a person would get it. Use a clean starting state: a new item outside existing ones, a connected account that could be reused, no learned workarounds.
 2. Drive it with the automation you have (computer use, browser tools, Playwright, the platform's UI test runner). Start a timer at launch.
 3. Record every step, including wrong turns and waits. Deliberately try the wrong turns a newcomer would take: the nested or overlapping item, the missing connection, the error path, the restart.
-4. At every interruption (detour, error, retry, decline, restart), check whether typed text is still there. Record kept or lost.
+4. For changed handoffs, try the affected entries and check where success, Back, Cancel and recoverable failure leave you. Check the draft, selected item and other state the next action needs. At each interruption, record whether typed text was kept or lost. Walk distinct paths from their own starting states. For a missing or broken handoff, attach evidence from after the action to its step ID and put the fix in the project’s planning queue.
 5. Test each step with the two questions, group friction steps into events, weight them, run the scorer.
 
 **Write two files before you report anything**, so the work survives the session:

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workbench</title>
+<style>
+  body { max-width: 42rem; margin: 2rem auto; padding: 0 1rem; font: 1rem system-ui; }
+  nav, .actions { display: flex; flex-wrap: wrap; gap: .8rem; align-items: center; }
+  label { display: block; margin: .8rem 0; }
+  textarea { display: block; width: 100%; box-sizing: border-box; }
+  input, textarea, button, select { font: inherit; }
+  section + section { margin-top: 1.5rem; }
+  #key-error { color: #983d22; }
+</style>
+<header><nav aria-label="Workbench">
+  <a href="#projects">Projects</a>
+  <a href="#providers">Providers</a>
+</nav></header>
+<main id="view"></main>
+<script>
+const projects = new Map([['docs', 'Docs'], ['studio', 'Studio']]);
+const drafts = new Map();
+const models = new Map();
+const runs = new Map();
+const defaultModel = 'Cedar Small';
+const view = document.querySelector('#view');
+
+function atlasConnected() {
+  return localStorage.getItem('workbench.atlas') === 'connected';
+}
+
+function connectAtlas(key) {
+  // Fixture credentials: atlas-ok is accepted; any other key is rejected.
+  if (key !== 'atlas-ok') return false;
+  localStorage.setItem('workbench.atlas', 'connected');
+  return true;
+}
+
+function showAtlasForm() {
+  const panel = view.querySelector('#atlas-form');
+  panel.hidden = false;
+  panel.querySelector('input').focus();
+}
+
+function renderProviders() {
+  view.innerHTML = `<h1>Providers</h1>
+    <section><h2>Cedar</h2><p>Connected</p></section>
+    <section><h2>Atlas</h2>
+      ${atlasConnected() ? '<p>Connected · Atlas Large</p>' : `
+      <button type="button" id="atlas-connect">Connect Atlas</button>
+      <form id="atlas-form" hidden>
+        <label>Atlas API key <input name="key" type="password" autocomplete="off" required></label>
+        <p id="key-error" role="alert"></p>
+        <div class="actions"><button>Connect</button><button type="button" id="cancel">Cancel</button></div>
+      </form>`}
+    </section>`;
+  if (atlasConnected()) return;
+  const trigger = view.querySelector('#atlas-connect');
+  const form = view.querySelector('#atlas-form');
+  trigger.onclick = showAtlasForm;
+  view.querySelector('#cancel').onclick = () => {
+    form.reset();
+    form.querySelector('#key-error').textContent = '';
+    form.hidden = true;
+    trigger.focus();
+  };
+  form.onsubmit = (event) => {
+    event.preventDefault();
+    if (!connectAtlas(form.elements.key.value)) {
+      form.querySelector('#key-error').textContent = 'Atlas rejected this key. Enter a different key.';
+      return;
+    }
+    renderProviders();
+  };
+}
+
+function renderProject(id) {
+  view.innerHTML = `<h1>${projects.get(id)}</h1>
+    <label>Task <textarea id="draft" rows="4"></textarea></label>
+    <label>Model <select id="model"><option>Cedar Small</option><option>Cedar Large</option></select></label>
+    <button id="start">Run task</button>
+    <p id="result" role="status"></p>`;
+  const draft = view.querySelector('#draft');
+  const model = view.querySelector('#model');
+  const result = view.querySelector('#result');
+  draft.value = drafts.get(id) ?? '';
+  model.value = models.get(id) ?? defaultModel;
+  result.textContent = runs.get(id) ?? '';
+  draft.oninput = () => drafts.set(id, draft.value);
+  model.onchange = () => models.set(id, model.value);
+  view.querySelector('#start').onclick = () => {
+    if (!draft.value.trim()) {
+      result.textContent = 'Write a task first.';
+      draft.focus();
+      return;
+    }
+    const message = `Running in ${projects.get(id)} with ${model.value}`;
+    runs.set(id, message);
+    result.textContent = message;
+  };
+}
+
+function render() {
+  const route = location.hash.slice(1);
+  if (route === 'providers') return renderProviders();
+  const match = /^project\/(.+)$/.exec(route);
+  if (match && projects.has(match[1])) return renderProject(match[1]);
+  view.innerHTML = `<h1>Projects</h1><ul>${Array.from(projects, ([id, name]) =>
+    `<li><a href="#project/${id}">${name}</a></li>`).join('')}</ul>`;
+}
+
+addEventListener('hashchange', render);
+render();
+</script>
+</html>
